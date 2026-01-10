@@ -600,6 +600,13 @@
               </div>
               <div class="flex gap-3">
                 <button
+                  id="toggle-sequential-mode"
+                  class="flex items-center gap-2 px-4 py-2 rounded-xl bg-purple-50 text-purple-600 hover:bg-purple-100 transition-colors text-sm font-medium"
+                >
+                  <span class="material-icons-round text-sm">auto_stories</span>
+                  <span id="mode-toggle-text">Sequential Mode</span>
+                </button>
+                <button
                   onclick="editPlan()"
                   class="flex items-center gap-2 px-4 py-2 rounded-xl bg-gray-50 text-gray-600 hover:bg-gray-100 transition-colors text-sm font-medium"
                 >
@@ -623,8 +630,13 @@
               </div>
             </div>
 
-            <!-- Output Grid Layout -->
-            <div class="space-y-8">
+            <!-- Sequential Study Container -->
+            <div id="sequential-study-container" class="hidden">
+              <!-- Sequential content will be rendered here -->
+            </div>
+
+            <!-- Original Output Grid Layout -->
+            <div id="original-layout" class="space-y-8">
               <!-- Top Section: Core Insights -->
               <div class="grid grid-cols-1 gap-8">
                 <!-- Summary -->
@@ -833,6 +845,7 @@
     <!-- LOGIC -->
     <script type="module">
       import { auth, API_BASE } from "/backend/js/auth.js";
+      import { SequentialStudy } from "./sequential-study.js";
 
       // --- CONFIG & STATE ---
       const ENDPOINT = `${API_BASE}/api/generate-plan`;
@@ -844,6 +857,8 @@
       let currentQuizIndex = 0;
       let answersVisible = false;
       let masteryData = {};
+      let sequentialMode = false;
+      let sequentialStudy = null;
 
       // DOM Elements
       const UI = {
@@ -886,6 +901,12 @@
           pendingCount: document.getElementById("reviews-pending-count"),
           overdueBadge: document.getElementById("reviews-overdue-badge"),
           todayText: document.getElementById("reviews-today-text"),
+        },
+        sequential: {
+          container: document.getElementById("sequential-study-container"),
+          originalLayout: document.getElementById("original-layout"),
+          toggleBtn: document.getElementById("toggle-sequential-mode"),
+          toggleText: document.getElementById("mode-toggle-text"),
         },
       };
 
@@ -1300,6 +1321,22 @@
 
         currentData = data;
         UI.loading.style.display = "none";
+        
+        // Reset Sequential Mode
+        sequentialMode = false;
+        sequentialStudy = null;
+        if (UI.sequential && UI.sequential.container) {
+          UI.sequential.container.innerHTML = "";
+          UI.sequential.container.classList.add("hidden");
+          UI.sequential.originalLayout.classList.remove("hidden");
+          UI.sequential.toggleBtn.classList.replace("bg-blue-50", "bg-purple-50");
+          UI.sequential.toggleBtn.classList.replace("text-blue-600", "text-purple-600");
+          UI.sequential.toggleBtn.innerHTML = `
+            <span class="material-icons-round text-sm">auto_stories</span>
+            <span id="mode-toggle-text">Sequential Mode</span>
+          `;
+        }
+
         UI.results.classList.add("hidden"); // Reset
 
         // Re-trigger animation
@@ -1782,9 +1819,12 @@
 
         try {
           const token = await auth.currentUser.getIdToken();
-          const response = await fetch(`${API_BASE}/api/progress/today/reviews`, {
-            headers: { Authorization: `Bearer ${token}` },
-          });
+          const response = await fetch(
+            `${API_BASE}/api/progress/today/reviews`,
+            {
+              headers: { Authorization: `Bearer ${token}` },
+            }
+          );
 
           if (!response.ok) return;
 
@@ -1819,7 +1859,8 @@
         // Create a modal showing today's and overdue reviews
         const modal = document.createElement("div");
         modal.id = "reviews-modal";
-        modal.className = "fixed inset-0 z-[100] flex items-center justify-center p-4";
+        modal.className =
+          "fixed inset-0 z-[100] flex items-center justify-center p-4";
         modal.innerHTML = `
           <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" onclick="closeReviewsModal()"></div>
           <div class="relative bg-white rounded-3xl shadow-2xl max-w-lg w-full max-h-[80vh] overflow-hidden animate-enter">
@@ -1830,34 +1871,47 @@
               </button>
             </div>
             <div class="p-6 overflow-y-auto max-h-[60vh] space-y-6">
-              ${todayReviewsData.overdue.length > 0 ? `
+              ${
+                todayReviewsData.overdue.length > 0
+                  ? `
                 <div>
                   <h4 class="text-sm font-bold text-red-600 mb-3 flex items-center gap-2">
                     <span class="material-icons-round text-sm">warning</span>
                     Overdue
                   </h4>
                   <div class="space-y-3">
-                    ${todayReviewsData.overdue.map(r => renderReviewItem(r, "overdue")).join("")}
+                    ${todayReviewsData.overdue.map((r) => renderReviewItem(r, "overdue")).join("")}
                   </div>
                 </div>
-              ` : ""}
-              ${todayReviewsData.today.length > 0 ? `
+              `
+                  : ""
+              }
+              ${
+                todayReviewsData.today.length > 0
+                  ? `
                 <div>
                   <h4 class="text-sm font-bold text-green-600 mb-3 flex items-center gap-2">
                     <span class="material-icons-round text-sm">event_available</span>
                     Due Today
                   </h4>
                   <div class="space-y-3">
-                    ${todayReviewsData.today.map(r => renderReviewItem(r, "today")).join("")}
+                    ${todayReviewsData.today.map((r) => renderReviewItem(r, "today")).join("")}
                   </div>
                 </div>
-              ` : ""}
-              ${todayReviewsData.today.length === 0 && todayReviewsData.overdue.length === 0 ? `
+              `
+                  : ""
+              }
+              ${
+                todayReviewsData.today.length === 0 &&
+                todayReviewsData.overdue.length === 0
+                  ? `
                 <div class="text-center py-10">
                   <span class="material-icons-round text-6xl text-green-300 mb-4">check_circle</span>
                   <p class="text-gray-500">All caught up! No reviews pending.</p>
                 </div>
-              ` : ""}
+              `
+                  : ""
+              }
             </div>
           </div>
         `;
@@ -1866,7 +1920,10 @@
 
       function renderReviewItem(review, type) {
         const dateStr = new Date(review.scheduledDate).toLocaleDateString();
-        const bgClass = type === "overdue" ? "bg-red-50 border-red-100" : "bg-green-50 border-green-100";
+        const bgClass =
+          type === "overdue"
+            ? "bg-red-50 border-red-100"
+            : "bg-green-50 border-green-100";
         return `
           <div class="p-4 rounded-2xl ${bgClass} border">
             <div class="flex justify-between items-start mb-2">
@@ -1893,7 +1950,12 @@
         if (modal) modal.remove();
       };
 
-      window.markProgressFromModal = async function (planId, day, topic, status) {
+      window.markProgressFromModal = async function (
+        planId,
+        day,
+        topic,
+        status
+      ) {
         try {
           const token = await auth.currentUser.getIdToken();
           const response = await fetch(`${API_BASE}/api/progress/mark`, {
@@ -1916,7 +1978,12 @@
         }
       };
 
-      window.markScheduleProgress = async function (planId, day, topic, status) {
+      window.markScheduleProgress = async function (
+        planId,
+        day,
+        topic,
+        status
+      ) {
         try {
           const token = await auth.currentUser.getIdToken();
           const response = await fetch(`${API_BASE}/api/progress/mark`, {
@@ -1969,7 +2036,8 @@
         if (stats && stats.totalItems > 0) {
           const progressPercent = Math.round(stats.completionRate * 100);
           const summaryDiv = document.createElement("div");
-          summaryDiv.className = "mb-6 p-4 bg-blue-50/50 rounded-2xl border border-blue-100";
+          summaryDiv.className =
+            "mb-6 p-4 bg-blue-50/50 rounded-2xl border border-blue-100";
           summaryDiv.innerHTML = `
             <div class="flex justify-between items-center mb-2">
               <span class="text-xs font-bold text-gray-600">Progress</span>
@@ -1990,7 +2058,8 @@
         // Render each schedule item with progress
         progressItems.forEach((item) => {
           const div = document.createElement("div");
-          div.className = "relative flex items-start gap-5 pb-6 last:pb-0 group/step";
+          div.className =
+            "relative flex items-start gap-5 pb-6 last:pb-0 group/step";
 
           // Status colors and icons
           let statusBadge = "";
@@ -2006,7 +2075,9 @@
             statusBadge = `<span class="text-[10px] font-bold text-amber-600 bg-amber-100 px-2 py-0.5 rounded-full flex items-center gap-1"><span class="material-icons-round text-xs">event</span>Rescheduled</span>`;
           }
 
-          const scheduledDate = new Date(item.scheduledDate).toLocaleDateString();
+          const scheduledDate = new Date(
+            item.scheduledDate
+          ).toLocaleDateString();
           const isPending = item.status === "pending";
           const topicEscaped = item.topic.replace(/'/g, "\\'");
 
@@ -2022,7 +2093,9 @@
                 <p class="text-sm font-semibold text-slate-800 leading-tight">${item.topic}</p>
                 ${item.hint ? `<p class="mt-2 text-[11px] text-gray-500 bg-gray-50/50 p-2 rounded-xl border border-gray-100/50 line-clamp-2 hover:line-clamp-none transition-all cursor-help"><span class="mr-1">💡</span>${item.hint}</p>` : ""}
               </div>
-              ${isPending ? `
+              ${
+                isPending
+                  ? `
                 <div class="flex gap-2 mt-3">
                   <button onclick="markScheduleProgress('${currentPlanId}', '${item.day}', '${topicEscaped}', 'completed')" class="px-3 py-1.5 bg-green-100 hover:bg-green-200 text-green-700 text-[10px] font-bold rounded-lg transition-colors flex items-center gap-1">
                     <span class="material-icons-round text-xs">check</span> Complete
@@ -2031,12 +2104,70 @@
                     <span class="material-icons-round text-xs">close</span> Missed
                   </button>
                 </div>
-              ` : ""}
+              `
+                  : ""
+              }
             </div>
           `;
           schedDiv.appendChild(div);
         });
       }
+
+      // --- SEQUENTIAL MODE ---
+      if (UI.sequential.toggleBtn) {
+        UI.sequential.toggleBtn.addEventListener("click", () => {
+          toggleSequentialMode();
+        });
+      }
+
+      window.toggleSequentialMode = function() {
+        if (!currentData) return;
+        
+        sequentialMode = !sequentialMode;
+        
+        if (sequentialMode) {
+          // Switch to sequential
+          if (!sequentialStudy) {
+            sequentialStudy = new SequentialStudy(currentData);
+            sequentialStudy.render(UI.sequential.container);
+            
+            // Handle completion to switch back or show summary
+            sequentialStudy.setOnComplete(() => {
+              // Optional: do something when all sections are done
+              const btn = UI.sequential.container.querySelector('#continue-btn');
+              if (btn) {
+                btn.innerHTML = `<span class="material-icons-round">check_circle</span> <span>All Done!</span>`;
+                btn.classList.remove('from-blue-600', 'to-indigo-600');
+                btn.classList.add('from-green-500', 'to-emerald-600');
+              }
+            });
+          }
+          
+          UI.sequential.originalLayout.classList.add("hidden");
+          UI.sequential.container.classList.remove("hidden");
+          UI.sequential.container.classList.add("animate-enter");
+          
+          UI.sequential.toggleText.innerText = "View Full Dashboard";
+          UI.sequential.toggleBtn.classList.replace("bg-purple-50", "bg-blue-50");
+          UI.sequential.toggleBtn.classList.replace("text-purple-600", "text-blue-600");
+          UI.sequential.toggleBtn.innerHTML = `
+            <span class="material-icons-round text-sm">dashboard</span>
+            <span id="mode-toggle-text">Full View</span>
+          `;
+        } else {
+          // Switch back to original
+          UI.sequential.container.classList.add("hidden");
+          UI.sequential.originalLayout.classList.remove("hidden");
+          UI.sequential.originalLayout.classList.add("animate-enter");
+          
+          UI.sequential.toggleBtn.classList.replace("bg-blue-50", "bg-purple-50");
+          UI.sequential.toggleBtn.classList.replace("text-blue-600", "text-purple-600");
+          UI.sequential.toggleBtn.innerHTML = `
+            <span class="material-icons-round text-sm">auto_stories</span>
+            <span id="mode-toggle-text">Sequential Mode</span>
+          `;
+        }
+      };
 
       // --- MOBILE SIDEBAR LOGIC ---
       document.addEventListener("DOMContentLoaded", () => {
