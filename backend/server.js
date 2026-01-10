@@ -1689,6 +1689,334 @@ app.delete('/api/account', authenticate, async (req, res) => {
     }
 });
 
+// --- 8. PROGRESS TRACKING SYSTEM ---
+
+// Helper: Parse day string (e.g., "Day 1") to number
+const parseDayNumber = (dayString) => {
+    const match = dayString.match(/\d+/);
+    return match ? parseInt(match[0], 10) : 1;
+};
+
+// Helper: Compute scheduled date from plan creation date and day offset
+const computeScheduledDate = (planCreatedAt, dayString) => {
+    const dayOffset = parseDayNumber(dayString);
+    const baseDate = planCreatedAt.toDate ? planCreatedAt.toDate() : new Date(planCreatedAt);
+    const scheduledDate = new Date(baseDate);
+    scheduledDate.setDate(scheduledDate.getDate() + dayOffset);
+    scheduledDate.setHours(0, 0, 0, 0); // normalize to start of day
+    return scheduledDate;
+};
+
+// Helper: Get today's date normalized to start of day
+const getTodayStart = () => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return today;
+};
+
+// Helper: Initialize progress entries for a plan
+const initializePlanProgress = async (userId, planId, planCreatedAt, spacedRepetition) => {
+    if (!db || !spacedRepetition || !spacedRepetition.length) return [];
+    
+    const progressEntries = [];
+    const batch = db.batch();
+    
+    for (const item of spacedRepetition) {
+        const scheduledDate = computeScheduledDate(planCreatedAt, item.day);
+        const progressRef = db.collection('study_progress').doc();
+        
+        const progressData = {
+            userId,
+            planId,
+            topic: item.topic,
+            day: item.day,
+            hint: item.hint || null,
+            scheduledDate: admin.firestore.Timestamp.fromDate(scheduledDate),
+            status: 'pending',
+            completedAt: null,
+            rescheduledTo: null,
+            createdAt: admin.firestore.FieldValue.serverTimestamp(),
+            updatedAt: admin.firestore.FieldValue.serverTimestamp()
+        };
+        
+        batch.set(progressRef, progressData);
+        progressEntries.push({ id: progressRef.id, ...progressData, scheduledDate });
+    }
+    
+    await batch.commit();
+    console.log(`📅 Initialized ${progressEntries.length} progress entries for plan ${planId}`);
+    return progressEntries;
+};
+
+// Helper: Get or initialize progress for a plan
+const getOrInitializePlanProgress = async (userId, planId) => {
+    if (!db) return { progress: [], initialized: false };
+    
+    // check if progress already exists
+    const existingProgress = await db.collection('study_progress')
+        .where('userId', '==', userId)
+        .where('planId', '==', planId)
+        .get();
+    
+    if (!existingProgress.empty) {
+        const progress = [];
+        existingProgress.forEach(doc => {
+            const data = doc.data();
+            progress.push({
+                id: doc.id,
+                ...data,
+                scheduledDate: data.scheduledDate?.toDate ? data.scheduledDate.toDate() : new Date(data.scheduledDate)
+            });
+        });
+        return { progress, initialized: true };
+    }
+    
+    // fetch the plan to initialize progress
+    const planDoc = await db.collection('generations').doc(planId).get();
+    if (!planDoc.exists || planDoc.data().userId !== userId) {
+        return { progress: [], initialized: false };
+    }
+    
+    const planData = planDoc.data();
+    const spacedRepetition = planData.studyPlan?.spaced_repetition || [];
+    const planCreatedAt = planData.createdAt || new Date();
+    
+    const progress = await initializePlanProgress(userId, planId, planCreatedAt, spacedRepetition);
+    return { progress, initialized: true };
+};
+
+// Helper: Compute completion stats
+const computeProgressStats = (progressItems) => {
+    const total = progressItems.length;
+    const completed = progressItems.filter(p => p.status === 'completed').length;
+    const missed = progressItems.filter(p => p.status === 'missed').length;
+    const rescheduled = progressItems.filter(p => p.status === 'rescheduled').length;
+    const pending = progressItems.filter(p => p.status === 'pending').length;
+    
+    return {
+        totalItems: total,
+        completed,
+        missed,
+        rescheduled,
+        pending,
+        completionRate: total > 0 ? Math.round((completed / total) * 100) / 100 : 0
+    };
+};
+
+// POST /api/progress/mark - Mark a review item as completed/missed/rescheduled
+app.post('/api/progress/mark', authenticate, async (req, res) => {
+    if (!db) return res.status(500).json({ error: 'Database not initialized' });
+    
+    try {
+        const userId = req.user.uid;
+        const { planId, day, topic, status, rescheduledTo } = req.body;
+        
+        // validation
+        if (!planId || !day || !topic || !status) {
+            return res.status(400).json({ error: 'Missing required fields: planId, day, topic, status' });
+        }
+        
+        const validStatuses = ['completed', 'missed', 'rescheduled', 'pending'];
+        if (!validStatuses.includes(status)) {
+            return res.status(400).json({ error: `Invalid status. Must be one of: ${validStatuses.join(', ')}` });
+        }
+        
+        // ensure progress is initialized
+        await getOrInitializePlanProgress(userId, planId);
+        
+        // find the specific progress entry
+        const progressQuery = await db.collection('study_progress')
+            .where('userId', '==', userId)
+            .where('planId', '==', planId)
+            .where('day', '==', day)
+            .where('topic', '==', topic)
+            .limit(1)
+            .get();
+        
+        if (progressQuery.empty) {
+            return res.status(404).json({ error: 'Progress entry not found' });
+        }
+        
+        const progressDoc = progressQuery.docs[0];
+        const updateData = {
+            status,
+            updatedAt: admin.firestore.FieldValue.serverTimestamp()
+        };
+        
+        if (status === 'completed') {
+            updateData.completedAt = admin.firestore.FieldValue.serverTimestamp();
+        }
+        
+        if (status === 'rescheduled' && rescheduledTo) {
+            updateData.rescheduledTo = admin.firestore.Timestamp.fromDate(new Date(rescheduledTo));
+        }
+        
+        await progressDoc.ref.update(updateData);
+        
+        console.log(`📝 Marked progress: ${topic} (${day}) -> ${status} for user ${userId}`);
+        
+        res.json({
+            success: true,
+            progress: {
+                id: progressDoc.id,
+                ...progressDoc.data(),
+                ...updateData
+            }
+        });
+        
+    } catch (error) {
+        console.error('Error marking progress:', error);
+        res.status(500).json({ error: 'Failed to mark progress' });
+    }
+});
+
+// GET /api/progress/:planId - Get all progress entries for a specific plan
+app.get('/api/progress/:planId', authenticate, async (req, res) => {
+    if (!db) return res.status(500).json({ error: 'Database not initialized' });
+    
+    try {
+        const userId = req.user.uid;
+        const { planId } = req.params;
+        
+        const { progress, initialized } = await getOrInitializePlanProgress(userId, planId);
+        
+        if (!initialized && progress.length === 0) {
+            return res.status(404).json({ error: 'Plan not found or access denied' });
+        }
+        
+        // sort by scheduled date
+        progress.sort((a, b) => {
+            const dateA = a.scheduledDate instanceof Date ? a.scheduledDate : new Date(a.scheduledDate);
+            const dateB = b.scheduledDate instanceof Date ? b.scheduledDate : new Date(b.scheduledDate);
+            return dateA - dateB;
+        });
+        
+        const stats = computeProgressStats(progress);
+        
+        res.json({
+            progress: progress.map(p => ({
+                id: p.id,
+                topic: p.topic,
+                day: p.day,
+                hint: p.hint,
+                scheduledDate: p.scheduledDate,
+                status: p.status,
+                completedAt: p.completedAt?.toDate ? p.completedAt.toDate() : p.completedAt,
+                rescheduledTo: p.rescheduledTo?.toDate ? p.rescheduledTo.toDate() : p.rescheduledTo
+            })),
+            ...stats
+        });
+        
+    } catch (error) {
+        console.error('Error fetching progress:', error);
+        res.status(500).json({ error: 'Failed to fetch progress' });
+    }
+});
+
+// GET /api/progress/today/reviews - Get today's required reviews and overdue items
+app.get('/api/progress/today/reviews', authenticate, async (req, res) => {
+    if (!db) return res.status(500).json({ error: 'Database not initialized' });
+    
+    try {
+        const userId = req.user.uid;
+        const today = getTodayStart();
+        const todayEnd = new Date(today);
+        todayEnd.setHours(23, 59, 59, 999);
+        
+        // fetch all pending progress for user
+        const progressSnapshot = await db.collection('study_progress')
+            .where('userId', '==', userId)
+            .where('status', '==', 'pending')
+            .get();
+        
+        const todayReviews = [];
+        const overdueReviews = [];
+        const planIds = new Set();
+        
+        progressSnapshot.forEach(doc => {
+            const data = doc.data();
+            planIds.add(data.planId);
+            
+            const scheduledDate = data.scheduledDate?.toDate ? data.scheduledDate.toDate() : new Date(data.scheduledDate);
+            
+            const reviewItem = {
+                id: doc.id,
+                planId: data.planId,
+                topic: data.topic,
+                day: data.day,
+                hint: data.hint,
+                scheduledDate
+            };
+            
+            if (scheduledDate >= today && scheduledDate <= todayEnd) {
+                todayReviews.push(reviewItem);
+            } else if (scheduledDate < today) {
+                overdueReviews.push(reviewItem);
+            }
+        });
+        
+        // fetch plan details (fileName) for context
+        const planDetails = {};
+        if (planIds.size > 0) {
+            const planPromises = Array.from(planIds).map(async (planId) => {
+                const planDoc = await db.collection('generations').doc(planId).get();
+                if (planDoc.exists) {
+                    planDetails[planId] = {
+                        fileName: planDoc.data().fileName || 'Untitled',
+                        mainTopic: planDoc.data().studyPlan?.concept_map?.main_topic || 'Study Plan'
+                    };
+                }
+            });
+            await Promise.all(planPromises);
+        }
+        
+        // enrich reviews with plan details
+        const enrichWithPlanDetails = (reviews) => reviews.map(r => ({
+            ...r,
+            fileName: planDetails[r.planId]?.fileName || 'Unknown',
+            mainTopic: planDetails[r.planId]?.mainTopic || 'Study Plan'
+        }));
+        
+        // sort by date
+        todayReviews.sort((a, b) => a.scheduledDate - b.scheduledDate);
+        overdueReviews.sort((a, b) => a.scheduledDate - b.scheduledDate);
+        
+        res.json({
+            today: enrichWithPlanDetails(todayReviews),
+            overdue: enrichWithPlanDetails(overdueReviews),
+            totalPending: todayReviews.length + overdueReviews.length
+        });
+        
+    } catch (error) {
+        console.error('Error fetching today reviews:', error);
+        res.status(500).json({ error: 'Failed to fetch today reviews' });
+    }
+});
+
+// GET /api/progress/stats/:planId - Get progress statistics for a specific plan
+app.get('/api/progress/stats/:planId', authenticate, async (req, res) => {
+    if (!db) return res.status(500).json({ error: 'Database not initialized' });
+    
+    try {
+        const userId = req.user.uid;
+        const { planId } = req.params;
+        
+        const { progress, initialized } = await getOrInitializePlanProgress(userId, planId);
+        
+        if (!initialized && progress.length === 0) {
+            return res.status(404).json({ error: 'Plan not found or access denied' });
+        }
+        
+        const stats = computeProgressStats(progress);
+        
+        res.json(stats);
+        
+    } catch (error) {
+        console.error('Error fetching progress stats:', error);
+        res.status(500).json({ error: 'Failed to fetch progress stats' });
+    }
+});
+
 const PORT = process.env.PORT || 3000;
 
 // Only start server if run directly (not imported)

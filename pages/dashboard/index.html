@@ -8,7 +8,7 @@
     <title>Dashboard - GoStudy!</title>
 
     <!-- Tailwind -->
-    <link href="/assets/css/output.css" rel="stylesheet">
+    <link href="/assets/css/output.css" rel="stylesheet" />
 
     <!-- Fonts -->
     <link
@@ -29,7 +29,6 @@
     <link rel="apple-touch-icon" href="/assets/go-logo.png?v=2" />
     <meta name="theme-color" content="#007AFF" />
 
-    
     <style>
       /* Smooth scrolling & custom scrollbars */
       body {
@@ -163,8 +162,14 @@
       class="lg:hidden h-16 flex items-center justify-between px-6 bg-white/80 backdrop-blur-md border-b border-gray-200 fixed top-0 left-0 right-0 z-[60]"
     >
       <a href="/index.html" class="flex items-center gap-2">
-        <img src="/assets/go-logo.png?v=2" alt="GoStudy! Logo" class="w-6 h-6" />
-        <span class="font-bold text-lg tracking-tight text-slate-900">GoStudy!</span>
+        <img
+          src="/assets/go-logo.png?v=2"
+          alt="GoStudy! Logo"
+          class="w-6 h-6"
+        />
+        <span class="font-bold text-lg tracking-tight text-slate-900"
+          >GoStudy!</span
+        >
       </a>
       <button
         id="mobile-menu-toggle"
@@ -186,7 +191,9 @@
       class="fixed inset-y-0 left-0 w-72 bg-white z-[80] shadow-2xl transform -translate-x-full transition-transform duration-300 lg:hidden flex flex-col pt-2"
     >
       <div class="h-16 flex items-center justify-between px-6 mb-2">
-        <span class="font-bold text-xl tracking-tight text-slate-900">Menu</span>
+        <span class="font-bold text-xl tracking-tight text-slate-900"
+          >Menu</span
+        >
         <button
           id="mobile-menu-close"
           class="w-8 h-8 flex items-center justify-center rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-all"
@@ -195,7 +202,10 @@
         </button>
       </div>
       <!-- Use the same content as the desktop sidebar -->
-      <div id="mobile-sidebar-content" class="flex-1 flex flex-col overflow-hidden">
+      <div
+        id="mobile-sidebar-content"
+        class="flex-1 flex flex-col overflow-hidden"
+      >
         <!-- Content will be cloned or manually copied here -->
       </div>
     </aside>
@@ -277,6 +287,45 @@
             <span id="usage-remaining" class="text-gray-400">3 left</span>
           </div>
         </div>
+
+        <!-- Today's Reviews Widget -->
+        <div class="px-4 pb-2">
+          <div
+            id="reviews-widget"
+            class="rounded-2xl bg-green-50/50 border border-green-100 p-4 hidden"
+          >
+            <div class="flex items-center justify-between mb-3">
+              <span
+                class="text-xs font-bold text-gray-500 uppercase tracking-wide flex items-center gap-1.5"
+                ><span class="material-icons-round text-sm text-green-600"
+                  >event_available</span
+                >Today's Reviews</span
+              >
+            </div>
+            <div
+              id="reviews-pending-count"
+              class="text-2xl font-bold text-gray-900 mb-1"
+            >
+              0
+            </div>
+            <div class="flex items-center gap-2 text-xs">
+              <span
+                id="reviews-overdue-badge"
+                class="hidden px-2 py-0.5 bg-red-100 text-red-600 font-bold rounded-full"
+                >0 overdue</span
+              >
+              <span id="reviews-today-text" class="text-gray-500"
+                >No reviews due</span
+              >
+            </div>
+            <button
+              onclick="showTodayReviews()"
+              class="w-full mt-3 py-2 bg-green-100 hover:bg-green-200 text-green-700 text-xs font-bold rounded-xl transition-colors"
+            >
+              View Reviews
+            </button>
+          </div>
+        </div>
       </div>
 
       <div class="p-4 mt-auto">
@@ -327,7 +376,9 @@
     </aside>
 
     <!-- MAIN CONTENT -->
-    <main class="flex-1 flex flex-col h-full overflow-hidden relative mt-16 lg:mt-0">
+    <main
+      class="flex-1 flex flex-col h-full overflow-hidden relative mt-16 lg:mt-0"
+    >
       <!-- Top Bar -->
       <header
         class="h-20 hidden lg:flex items-center justify-between px-10 flex-shrink-0 z-40"
@@ -348,7 +399,9 @@
           <div id="upload-section" class="mb-12 animate-enter">
             <!-- Hero Banner -->
             <div class="text-center mb-6 lg:mb-10">
-              <h1 class="text-2xl lg:text-4xl font-bold text-gray-900 mb-3 tracking-tight px-4 lg:px-0">
+              <h1
+                class="text-2xl lg:text-4xl font-bold text-gray-900 mb-3 tracking-tight px-4 lg:px-0"
+              >
                 What do you want to learn today?
               </h1>
               <p class="text-text-secondary text-base lg:text-lg">
@@ -747,7 +800,6 @@
                     </ul>
                   </div>
 
-
                   <!-- Schedule -->
                   <div
                     class="glass-panel p-8 rounded-3xl shadow-soft hover:shadow-lg transition-all duration-500"
@@ -829,6 +881,12 @@
         mastery: document.getElementById("mastery-list"),
         escalation: document.getElementById("escalation-banner"),
         escalationMsg: document.getElementById("escalation-message"),
+        reviews: {
+          widget: document.getElementById("reviews-widget"),
+          pendingCount: document.getElementById("reviews-pending-count"),
+          overdueBadge: document.getElementById("reviews-overdue-badge"),
+          todayText: document.getElementById("reviews-today-text"),
+        },
       };
 
       // --- VIEW MANAGEMENT ---
@@ -899,6 +957,8 @@
             loadUsage();
             // Load mastery data
             if (window.loadMastery) window.loadMastery();
+            // Load today's reviews
+            loadTodayReviews();
           } else {
             console.log("User not logged in");
           }
@@ -1188,6 +1248,8 @@
           setTimeout(() => {
             renderDashboard(data.studyPlan);
             showSection("results");
+            // Load progress tracking for this plan
+            loadAndRenderProgress(id);
           }, 500);
         } catch (err) {
           console.error("View Plan Error:", err);
@@ -1711,7 +1773,271 @@
         sessionStorage.setItem("editPlanData", JSON.stringify(planData));
         window.location.href = "/edit-plan/";
       };
-      
+
+      // --- PROGRESS TRACKING SYSTEM ---
+      let todayReviewsData = { today: [], overdue: [] };
+
+      async function loadTodayReviews() {
+        if (!auth.currentUser) return;
+
+        try {
+          const token = await auth.currentUser.getIdToken();
+          const response = await fetch(`${API_BASE}/api/progress/today/reviews`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+
+          if (!response.ok) return;
+
+          const data = await response.json();
+          todayReviewsData = data;
+
+          // Update widget
+          UI.reviews.widget.classList.remove("hidden");
+          const totalPending = data.today.length + data.overdue.length;
+          UI.reviews.pendingCount.innerText = totalPending;
+
+          if (data.overdue.length > 0) {
+            UI.reviews.overdueBadge.classList.remove("hidden");
+            UI.reviews.overdueBadge.innerText = `${data.overdue.length} overdue`;
+          } else {
+            UI.reviews.overdueBadge.classList.add("hidden");
+          }
+
+          if (totalPending === 0) {
+            UI.reviews.todayText.innerText = "All caught up!";
+          } else if (data.today.length > 0) {
+            UI.reviews.todayText.innerText = `${data.today.length} due today`;
+          } else {
+            UI.reviews.todayText.innerText = "Reviews pending";
+          }
+        } catch (e) {
+          console.error("Failed to load today's reviews:", e);
+        }
+      }
+
+      window.showTodayReviews = function () {
+        // Create a modal showing today's and overdue reviews
+        const modal = document.createElement("div");
+        modal.id = "reviews-modal";
+        modal.className = "fixed inset-0 z-[100] flex items-center justify-center p-4";
+        modal.innerHTML = `
+          <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" onclick="closeReviewsModal()"></div>
+          <div class="relative bg-white rounded-3xl shadow-2xl max-w-lg w-full max-h-[80vh] overflow-hidden animate-enter">
+            <div class="sticky top-0 bg-white border-b border-gray-100 p-6 flex justify-between items-center">
+              <h3 class="text-xl font-bold text-gray-900">Today's Reviews</h3>
+              <button onclick="closeReviewsModal()" class="text-gray-400 hover:text-gray-600">
+                <span class="material-icons-round">close</span>
+              </button>
+            </div>
+            <div class="p-6 overflow-y-auto max-h-[60vh] space-y-6">
+              ${todayReviewsData.overdue.length > 0 ? `
+                <div>
+                  <h4 class="text-sm font-bold text-red-600 mb-3 flex items-center gap-2">
+                    <span class="material-icons-round text-sm">warning</span>
+                    Overdue
+                  </h4>
+                  <div class="space-y-3">
+                    ${todayReviewsData.overdue.map(r => renderReviewItem(r, "overdue")).join("")}
+                  </div>
+                </div>
+              ` : ""}
+              ${todayReviewsData.today.length > 0 ? `
+                <div>
+                  <h4 class="text-sm font-bold text-green-600 mb-3 flex items-center gap-2">
+                    <span class="material-icons-round text-sm">event_available</span>
+                    Due Today
+                  </h4>
+                  <div class="space-y-3">
+                    ${todayReviewsData.today.map(r => renderReviewItem(r, "today")).join("")}
+                  </div>
+                </div>
+              ` : ""}
+              ${todayReviewsData.today.length === 0 && todayReviewsData.overdue.length === 0 ? `
+                <div class="text-center py-10">
+                  <span class="material-icons-round text-6xl text-green-300 mb-4">check_circle</span>
+                  <p class="text-gray-500">All caught up! No reviews pending.</p>
+                </div>
+              ` : ""}
+            </div>
+          </div>
+        `;
+        document.body.appendChild(modal);
+      };
+
+      function renderReviewItem(review, type) {
+        const dateStr = new Date(review.scheduledDate).toLocaleDateString();
+        const bgClass = type === "overdue" ? "bg-red-50 border-red-100" : "bg-green-50 border-green-100";
+        return `
+          <div class="p-4 rounded-2xl ${bgClass} border">
+            <div class="flex justify-between items-start mb-2">
+              <div>
+                <p class="font-bold text-gray-900 text-sm">${review.topic}</p>
+                <p class="text-xs text-gray-500">${review.fileName} • ${review.day}</p>
+              </div>
+              <span class="text-[10px] font-bold ${type === "overdue" ? "text-red-500" : "text-green-500"}">${dateStr}</span>
+            </div>
+            <div class="flex gap-2 mt-3">
+              <button onclick="markProgressFromModal('${review.planId}', '${review.day}', '${review.topic.replace(/'/g, "\\'")}', 'completed')" class="flex-1 py-2 bg-green-100 hover:bg-green-200 text-green-700 text-xs font-bold rounded-xl transition-colors flex items-center justify-center gap-1">
+                <span class="material-icons-round text-sm">check</span> Complete
+              </button>
+              <button onclick="markProgressFromModal('${review.planId}', '${review.day}', '${review.topic.replace(/'/g, "\\'")}', 'missed')" class="flex-1 py-2 bg-gray-100 hover:bg-gray-200 text-gray-600 text-xs font-bold rounded-xl transition-colors flex items-center justify-center gap-1">
+                <span class="material-icons-round text-sm">close</span> Missed
+              </button>
+            </div>
+          </div>
+        `;
+      }
+
+      window.closeReviewsModal = function () {
+        const modal = document.getElementById("reviews-modal");
+        if (modal) modal.remove();
+      };
+
+      window.markProgressFromModal = async function (planId, day, topic, status) {
+        try {
+          const token = await auth.currentUser.getIdToken();
+          const response = await fetch(`${API_BASE}/api/progress/mark`, {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ planId, day, topic, status }),
+          });
+
+          if (response.ok) {
+            // Reload reviews and close modal
+            await loadTodayReviews();
+            closeReviewsModal();
+            showTodayReviews();
+          }
+        } catch (e) {
+          console.error("Failed to mark progress:", e);
+        }
+      };
+
+      window.markScheduleProgress = async function (planId, day, topic, status) {
+        try {
+          const token = await auth.currentUser.getIdToken();
+          const response = await fetch(`${API_BASE}/api/progress/mark`, {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ planId, day, topic, status }),
+          });
+
+          if (response.ok) {
+            // Reload the current plan to show updated progress
+            if (currentPlanId) {
+              await loadAndRenderProgress(currentPlanId);
+            }
+            // Also reload today's reviews
+            loadTodayReviews();
+          }
+        } catch (e) {
+          console.error("Failed to mark progress:", e);
+        }
+      };
+
+      async function loadAndRenderProgress(planId) {
+        if (!auth.currentUser) return;
+
+        try {
+          const token = await auth.currentUser.getIdToken();
+          const response = await fetch(`${API_BASE}/api/progress/${planId}`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+
+          if (!response.ok) return;
+
+          const data = await response.json();
+          renderScheduleWithProgress(data.progress, data);
+        } catch (e) {
+          console.error("Failed to load plan progress:", e);
+        }
+      }
+
+      function renderScheduleWithProgress(progressItems, stats) {
+        const schedDiv = document.getElementById("result-schedule");
+        if (!schedDiv || !progressItems) return;
+
+        schedDiv.innerHTML = "";
+
+        // Add progress summary bar
+        if (stats && stats.totalItems > 0) {
+          const progressPercent = Math.round(stats.completionRate * 100);
+          const summaryDiv = document.createElement("div");
+          summaryDiv.className = "mb-6 p-4 bg-blue-50/50 rounded-2xl border border-blue-100";
+          summaryDiv.innerHTML = `
+            <div class="flex justify-between items-center mb-2">
+              <span class="text-xs font-bold text-gray-600">Progress</span>
+              <span class="text-xs font-bold text-blue-600">${progressPercent}%</span>
+            </div>
+            <div class="h-2 bg-gray-200 rounded-full overflow-hidden">
+              <div class="h-full bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full transition-all duration-500" style="width: ${progressPercent}%"></div>
+            </div>
+            <div class="flex justify-between mt-2 text-[10px] text-gray-500">
+              <span>${stats.completed} completed</span>
+              <span>${stats.pending} pending</span>
+              ${stats.missed > 0 ? `<span class="text-red-500">${stats.missed} missed</span>` : ""}
+            </div>
+          `;
+          schedDiv.appendChild(summaryDiv);
+        }
+
+        // Render each schedule item with progress
+        progressItems.forEach((item) => {
+          const div = document.createElement("div");
+          div.className = "relative flex items-start gap-5 pb-6 last:pb-0 group/step";
+
+          // Status colors and icons
+          let statusBadge = "";
+          let dotColor = "bg-blue-500";
+          if (item.status === "completed") {
+            dotColor = "bg-green-500";
+            statusBadge = `<span class="text-[10px] font-bold text-green-600 bg-green-100 px-2 py-0.5 rounded-full flex items-center gap-1"><span class="material-icons-round text-xs">check</span>Done</span>`;
+          } else if (item.status === "missed") {
+            dotColor = "bg-red-500";
+            statusBadge = `<span class="text-[10px] font-bold text-red-600 bg-red-100 px-2 py-0.5 rounded-full flex items-center gap-1"><span class="material-icons-round text-xs">close</span>Missed</span>`;
+          } else if (item.status === "rescheduled") {
+            dotColor = "bg-amber-500";
+            statusBadge = `<span class="text-[10px] font-bold text-amber-600 bg-amber-100 px-2 py-0.5 rounded-full flex items-center gap-1"><span class="material-icons-round text-xs">event</span>Rescheduled</span>`;
+          }
+
+          const scheduledDate = new Date(item.scheduledDate).toLocaleDateString();
+          const isPending = item.status === "pending";
+          const topicEscaped = item.topic.replace(/'/g, "\\'");
+
+          div.innerHTML = `
+            <div class="absolute -left-[23px] top-1 w-3 h-3 ${dotColor} rounded-full border-2 border-white shadow-sm z-10 group-hover/step:scale-125 transition-transform duration-300"></div>
+            <div class="flex-1">
+              <div class="flex items-center gap-2 mb-1.5 flex-wrap">
+                <span class="text-[10px] font-bold text-blue-500 bg-blue-50 px-2 py-0.5 rounded-full uppercase tracking-wider">${item.day}</span>
+                <span class="text-[10px] text-gray-400">${scheduledDate}</span>
+                ${statusBadge}
+              </div>
+              <div class="p-1">
+                <p class="text-sm font-semibold text-slate-800 leading-tight">${item.topic}</p>
+                ${item.hint ? `<p class="mt-2 text-[11px] text-gray-500 bg-gray-50/50 p-2 rounded-xl border border-gray-100/50 line-clamp-2 hover:line-clamp-none transition-all cursor-help"><span class="mr-1">💡</span>${item.hint}</p>` : ""}
+              </div>
+              ${isPending ? `
+                <div class="flex gap-2 mt-3">
+                  <button onclick="markScheduleProgress('${currentPlanId}', '${item.day}', '${topicEscaped}', 'completed')" class="px-3 py-1.5 bg-green-100 hover:bg-green-200 text-green-700 text-[10px] font-bold rounded-lg transition-colors flex items-center gap-1">
+                    <span class="material-icons-round text-xs">check</span> Complete
+                  </button>
+                  <button onclick="markScheduleProgress('${currentPlanId}', '${item.day}', '${topicEscaped}', 'missed')" class="px-3 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-600 text-[10px] font-bold rounded-lg transition-colors flex items-center gap-1">
+                    <span class="material-icons-round text-xs">close</span> Missed
+                  </button>
+                </div>
+              ` : ""}
+            </div>
+          `;
+          schedDiv.appendChild(div);
+        });
+      }
+
       // --- MOBILE SIDEBAR LOGIC ---
       document.addEventListener("DOMContentLoaded", () => {
         const toggleBtn = document.getElementById("mobile-menu-toggle");
