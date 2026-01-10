@@ -659,7 +659,6 @@
     }, { threshold: 0.1, rootMargin: "0px 0px -50px 0px" });
     revealElements.forEach(el => revealObserver.observe(el));
 
-    // Navbar scroll effect
     // Mobile Menu Toggle
     const mobileBtn = document.getElementById('mobile-menu-btn');
     const mobileClose = document.getElementById('mobile-menu-close');
@@ -697,61 +696,6 @@
         }
     });
   </script>
-      
-    </div>
-  </div>
-
-  <style>
-    @keyframes slideUp {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-  </style>
-
-  <script>
-    // PayPal Warning Notification Logic
-    let countdownInterval;
-    let secondsRemaining = 15;
-    
-    function startCountdown() {
-      const progressBar = document.getElementById('progress-bar');
-      const countdownEl = document.getElementById('countdown-seconds');
-      
-      countdownInterval = setInterval(() => {
-        secondsRemaining--;
-        countdownEl.textContent = secondsRemaining;
-        progressBar.style.width = `${(secondsRemaining / 15) * 100}%`;
-        
-        if (secondsRemaining <= 0) {
-          closePayPalWarning();
-        }
-      }, 1000);
-    }
-    
-    function stopCountdown() {
-      clearInterval(countdownInterval);
-      document.getElementById('countdown-seconds').textContent = '∞';
-      document.getElementById('progress-bar').style.width = '100%';
-    }
-    
-    function closePayPalWarning() {
-      clearInterval(countdownInterval);
-      const warning = document.getElementById('paypal-warning');
-      warning.style.animation = 'slideDown 0.3s ease-in forwards';
-      setTimeout(() => warning.remove(), 300);
-    }
-    
-    // Start countdown on page load
-    document.addEventListener('DOMContentLoaded', startCountdown);
-  </script>
-
-  <style>
-    @keyframes slideDown {
-      from { opacity: 1; transform: translateY(0); }
-      to { opacity: 0; transform: translateY(20px); }
-    }
-  </style>
-
 </body>
 </html>
 

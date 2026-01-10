@@ -672,7 +672,7 @@ GOALS:
 3. MEMORY PALACE: A vivid spatial mnemonic (MAX 100 words). Use **bold** for key anchor points (the locations or items in the room).
 4. WORKED EXAMPLES: Provide 2 high-quality examples max. Each must be formatted as: Given data, Step-by-step reasoning, and Final result.
 5. COMMON MISTAKES: Identify 2-3 common student errors for each topic based on the content.
-6. ACTIVE RECALL: Generate 5-8 quiz questions (multiple choice or short answer). 
+6. ACTIVE RECALL: Generate 5 quiz questions max (multiple choice or short answer). 
    - Questions must be tiered in three levels: 
      Level 1: core definitions / recognition
      Level 2: standard application / practice
@@ -687,6 +687,7 @@ CONSTRAINTS:
 - Snake_case keys.
 - NO extra text.
 - Do NOT reveal common mistakes upfront in the summary; put them only in the common_mistakes array.
+- Keep the total response UNDER 2000 tokens.
 
 SCHEMA:
 {
@@ -718,8 +719,8 @@ MUST: Ensure difficulty_rating is ALWAYS present for every active_recall item.`;
                 { role: 'system', content: systemPrompt },
                 { role: 'user', content: `Analyze this material:\n\n${truncatedText}` }
             ],
-            temperature: 0.2,
-            max_tokens: 3000
+            temperature: 0.1,
+            max_tokens: 4000
         }, {
             headers: {
                 'Authorization': `Bearer ${process.env.PERPLEXITY_API_KEY}`,
@@ -733,10 +734,15 @@ MUST: Ensure difficulty_rating is ALWAYS present for every active_recall item.`;
         
         if (!content) throw new Error("AI response was empty.");
         
-        // Clean markdown wrapper
+        // Clean markdown wrapper and extract JSON
         content = content.replace(/```json\s*/gi, '').replace(/```\s*/g, '').trim();
-        const jsonMatch = content.match(/\{[\s\S]*\}/);
-        if (jsonMatch) content = jsonMatch[0];
+        
+        // More robust JSON extraction
+        const firstBrace = content.indexOf('{');
+        const lastBrace = content.lastIndexOf('}');
+        if (firstBrace !== -1 && lastBrace !== -1) {
+            content = content.substring(firstBrace, lastBrace + 1);
+        }
 
         let studyPlan;
         try {
