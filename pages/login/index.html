@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login - GoStudy!</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+  <!-- Fonts & Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet"/>
+  <!-- Config & Styles -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: { primary: "#007AFF", secondary: "#F5F5F7", dark: "#1D1D1F" },
+          fontFamily: { sans: ["Inter", "-apple-system", "sans-serif"] },
+          boxShadow: { 'subtle': '0 2px 10px rgba(0,0,0,0.03)', 'card': '0 20px 40px -10px rgba(0,0,0,0.05)' },
+        },
+      },
+    };
+  </script>
+  <style>
+    /* Hide scrollbar while keeping scroll functionality */
+    html {
+      scrollbar-width: none; /* Firefox */
+      -ms-overflow-style: none; /* IE/Edge */
+    }
+    html::-webkit-scrollbar {
+      display: none; /* Chrome, Safari, Opera */
+    }
+
+    .hero-blob { background: radial-gradient(circle at 80% 20%, rgba(0, 122, 255, 0.08) 0%, rgba(255, 255, 255, 0) 60%); pointer-events: none; }
+    .hidden-state { display: none; opacity: 0; transform: translateY(10px); }
+    .visible-state { display: block; animation: fadeIn 0.4s forwards; }
+    @keyframes fadeIn { to { opacity: 1; transform: translateY(0); } }
+
+    .pfp-option {
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      border: 3px solid transparent;
+    }
+    .pfp-option:hover {
+      transform: scale(1.05);
+      border-color: rgba(0, 122, 255, 0.2);
+    }
+    .pfp-option.selected {
+      border-color: #007AFF;
+      box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.1);
+      transform: scale(1.08);
+    }
+  </style>
+    <!-- Favicon -->
+  <link rel="icon" href="/assets/go-logo.png?v=2" type="image/png" />
+  <link rel="shortcut icon" href="/assets/go-logo.png?v=2" type="image/png" />
+  <link rel="apple-touch-icon" href="/assets/go-logo.png?v=2" />
+  <meta name="theme-color" content="#007AFF" />
+  <link rel="stylesheet" href="/assets/css/navbar.css">
+</head>
+
+<body class="bg-[#FBFBFD] text-dark font-sans antialiased min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
+
+     
+  <!-- navbar -->
+  <header id="main-header" class="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-xl border-b border-white/20 transition-all duration-300">
+    <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+      
+      <!-- Logo -->
+      <a class="flex items-center gap-2 group" href="/index.html">
+        <div class="relative w-10 h-10 overflow-hidden">
+            <img src="/assets/go-logo.png?v=2" class="w-25 h-25" alt="Logo">
+        </div>
+        <span class="font-bold text-xl tracking-tight text-dark">GoStudy!</span>
+      </a>
+
+      <!-- Desktop Navigation -->
+      <nav class="hidden md:flex items-center gap-2">
+        
+        <!-- Products Dropdown -->
+        <div class="nav-item relative group px-4 py-3">
+          <button class="flex items-center gap-1 text-sm font-semibold text-gray-600 group-hover:text-primary transition-colors">
+            Products
+            <span class="material-icons-round text-lg opacity-50 group-hover:rotate-180 transition-transform">expand_more</span>
+          </button>
+          
+          <div class="dropdown-menu absolute top-full left-1/2 -translate-x-1/2 w-[700px] pt-4">
+            <div class="bg-white rounded-3xl p-6 shadow-premium border border-gray-100 grid grid-cols-2 gap-6 relative overflow-hidden">
+               
+               <div class="absolute top-0 right-0 w-64 h-64 bg-blue-50/50 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
+
+               <!-- Left Col -->
+               <div class="space-y-2">
+                  <h4 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">Core Platform</h4>
+                  
+                  <a href="/ai-chat/" class="flex items-start gap-4 p-3 rounded-2xl hover:bg-gray-100 transition-colors group/item">
+                    <div class="w-10 h-10 rounded-full bg-red-50 text-red-600 flex items-center justify-center group-hover/item:scale-110 transition-transform">
+                        <span class="material-icons-round text-xl">chat</span>
+                    </div>
+                    <div>
+                        <p class="font-bold text-dark text-sm">AI Chat</p>
+                        <p class="text-xs text-gray-500 mt-1">Chat with our AI assistant Nova.</p>
+                    </div>
+                  </a>
+
+                  <a href="/methodology/" class="flex items-start gap-4 p-3 rounded-2xl hover:bg-gray-100 transition-colors group/item">
+                    <div class="w-10 h-10 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center group-hover/item:scale-110 transition-transform">
+                        <span class="material-icons-round text-xl">psychology</span>
+                    </div>
+                    <div>
+                        <p class="font-bold text-dark text-sm">Methodology</p>
+                        <p class="text-xs text-gray-500 mt-1">Science-backed testing method.</p>
+                    </div>
+                  </a>
+
+                  <a href="/pricing/" class="flex items-start gap-4 p-3 rounded-2xl hover:bg-gray-100 transition-colors group/item">
+                    <div class="w-10 h-10 rounded-full bg-yellow-50 text-yellow-600 flex items-center justify-center group-hover/item:scale-110 transition-transform">
+                        <span class="material-icons-round text-xl">monetization_on</span>
+                    </div>
+                    <div>
+                        <p class="font-bold text-dark text-sm">Pricing</p>
+                        <p class="text-xs text-gray-500 mt-1">Choose the plan that best fits your needs.</p>
+                    </div>
+                  </a>
+
+                  <a href="/how-it-works/" class="flex items-start gap-4 p-3 rounded-2xl hover:bg-gray-100 transition-colors group/item">
+                    <div class="w-10 h-10 rounded-full bg-purple-50 text-purple-600 flex items-center justify-center group-hover/item:scale-110 transition-transform">
+                        <span class="material-icons-round text-xl text-purple-600">account_tree</span>
+                    </div>
+                    <div>
+                        <p class="font-bold text-dark text-sm">Memory Palace</p>
+                        <p class="text-xs text-gray-500 mt-1">AI-generated spatial maps.</p>
+                    </div>
+                  </a>
+               </div>
+
+               <!-- Right Col -->
+               <div class="flex flex-col h-full">
+                  <h4 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">Plans</h4>
+                  <a href="/pricing" class="block bg-dark rounded-2xl p-5 text-white flex-1 hover:shadow-lg transition-all group/card relative overflow-hidden">
+                      <div class="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent opacity-0 group-hover/card:opacity-100 transition-opacity"></div>
+                      <div class="relative z-10">
+                          <div class="flex justify-between items-start mb-4">
+                              <span class="bg-primary px-2 py-1 rounded text-[10px] font-bold">PRO</span>
+                              <span class="material-icons-round">arrow_forward</span>
+                          </div>
+                          <p class="font-bold text-lg mb-1">Upgrade your <br>Study Game</p>
+                          <p class="text-gray-400 text-xs">Unlock unlimited uploads and advanced spaced repetition.</p>
+                      </div>
+                  </a>
+               </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Resources Dropdown -->
+        <div class="nav-item relative group px-4 py-3">
+          <button class="flex items-center gap-1 text-sm font-semibold text-gray-600 group-hover:text-primary transition-colors">
+            Resources
+            <span class="material-icons-round text-lg opacity-50 group-hover:rotate-180 transition-transform">expand_more</span>
+          </button>
+          
+           <div class="dropdown-menu absolute top-full left-1/2 -translate-x-1/2 w-[400px] pt-4">
+            <div class="bg-white rounded-3xl p-2 shadow-premium border border-gray-100">
+               <a href="/articles/" class="flex items-center gap-4 p-3 rounded-2xl hover:bg-gray-100 transition-colors">
+                   <div class="w-10 h-10 rounded-full bg-orange-50 text-orange-500 flex items-center justify-center">
+                       <span class="material-icons-round">article</span>
+                   </div>
+                   <div class="flex-1">
+                       <p class="font-bold text-dark text-sm">Articles & Guides</p>
+                       <p class="text-xs text-gray-500">Study tips and neuroscience.</p>
+                   </div>
+               </a>
+               <a href="/onboarding/" class="flex items-start gap-4 p-3 rounded-2xl hover:bg-gray-100 transition-colors group/item">
+                    <div class="w-10 h-10 rounded-full bg-green-50 text-green-600 flex items-center justify-center group-hover/item:scale-110 transition-transform">
+                        <span class="material-icons-round text-xl">person_add</span>
+                    </div>
+                    <div>
+                        <p class="font-bold text-dark text-sm">Onboarding</p>
+                        <p class="text-xs text-gray-500 mt-1">Start your journey with us.</p>
+                    </div>
+                  </a>
+               <a href="/parents/" class="flex items-center gap-4 p-3 rounded-2xl hover:bg-gray-100 transition-colors">
+                   <div class="w-10 h-10 rounded-full bg-pink-50 text-pink-500 flex items-center justify-center">
+                       <span class="material-icons-round">family_restroom</span>
+                   </div>
+                   <div class="flex-1">
+                       <p class="font-bold text-dark text-sm">For Parents</p>
+                       <p class="text-xs text-gray-500">How to support your student.</p>
+                   </div>
+               </a>
+               <a href="#faq" class="flex items-center gap-4 p-3 rounded-2xl hover:bg-gray-100 transition-colors">
+                   <div class="w-10 h-10 rounded-full bg-blue-50 text-blue-500 flex items-center justify-center">
+                       <span class="material-icons-round">help</span>
+                   </div>
+                   <div class="flex-1">
+                       <p class="font-bold text-dark text-sm">Help Center</p>
+                       <p class="text-xs text-gray-500">FAQs and Support.</p>
+                   </div>
+               </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Company Dropdown -->
+        <div class="nav-item relative group px-4 py-3">
+          <button class="flex items-center gap-1 text-sm font-semibold text-gray-600 group-hover:text-primary transition-colors">
+            Company
+            <span class="material-icons-round text-lg opacity-50 group-hover:rotate-180 transition-transform">expand_more</span>
+          </button>
+          
+           <div class="dropdown-menu absolute top-full left-1/2 -translate-x-1/2 w-[300px] pt-4">
+            <div class="bg-white rounded-3xl p-2 shadow-premium border border-gray-100">
+               <a href="/about/" class="flex items-center gap-4 p-3 rounded-2xl hover:bg-gray-100 transition-colors">
+                   <span class="font-bold text-dark text-sm ml-2">About Us</span>
+               </a>
+               <a href="/contact/" class="flex items-center gap-4 p-3 rounded-2xl hover:bg-gray-100 transition-colors">
+                   <span class="font-bold text-dark text-sm ml-2">Contact</span>
+               </a>
+               <hr class="border-gray-100 my-1 mx-2">
+               <a href="/privacy/" class="flex items-center gap-4 p-3 rounded-2xl hover:bg-gray-100 transition-colors">
+                   <span class="text-gray-500 text-sm ml-2">Privacy Policy</span>
+               </a>
+               <a href="/terms/" class="flex items-center gap-4 p-3 rounded-2xl hover:bg-gray-100 transition-colors">
+                   <span class="text-gray-500 text-sm ml-2">Terms of Service</span>
+               </a>
+            </div>
+          </div>
+        </div>
+
+      </nav>
+
+      <!-- CTA & Mobile Toggle -->
+      <div class="flex items-center gap-4">
+        <a href="/login/" class="hidden md:inline-flex bg-dark hover:bg-black text-white px-6 py-2.5 rounded-full text-sm font-bold transition-all shadow-lg shadow-black/5 hover:shadow-black/10 hover:-translate-y-0.5">
+            Launch App
+        </a>
+        <button id="mobile-menu-btn" class="md:hidden p-2 text-dark">
+            <span class="material-icons-round text-2xl">menu</span>
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- mobile menu -->
+  <div id="mobile-menu" class="fixed inset-0 z-[60] bg-white opacity-0 pointer-events-none transition-opacity duration-300 flex flex-col hidden">
+      <div class="flex justify-between items-center p-6 border-b border-gray-100">
+          <span class="font-bold text-xl text-dark">GoStudy!</span>
+          <button id="mobile-menu-close" class="p-2 text-dark">
+              <span class="material-icons-round text-2xl">close</span>
+          </button>
+      </div>
+      <div class="p-6 flex-1 overflow-y-auto space-y-6">
+          <!--mobile links -->
+          <div class="space-y-4">
+              <h4 class="text-xs font-bold text-gray-400 uppercase tracking-widest">Products</h4>
+              <a href="/methodology/" class="block text-lg font-semibold text-dark">Active Recall</a>
+              <a href="/how-it-works/" class="block text-lg font-semibold text-dark">Memory Palace</a>
+              <a href="/pricing" class="block text-lg font-semibold text-dark">Pricing</a>
+          </div>
+          <div class="space-y-4">
+              <h4 class="text-xs font-bold text-gray-400 uppercase tracking-widest">Resources</h4>
+              <a href="/articles/" class="block text-lg font-semibold text-dark">Articles</a>
+              <a href="/parents/" class="block text-lg font-semibold text-dark">For Parents</a>
+              <a href="#faq" class="block text-lg font-semibold text-dark">Help Center</a>
+          </div>
+           <div class="space-y-4">
+              <h4 class="text-xs font-bold text-gray-400 uppercase tracking-widest">Company</h4>
+              <a href="/about/" class="block text-lg font-semibold text-dark">About</a>
+              <a href="/contact/" class="block text-lg font-semibold text-dark">Contact</a>
+          </div>
+      </div>
+      <div class="p-6 border-t border-gray-100">
+          <a href="/login/" class="block w-full text-center bg-primary text-white py-4 rounded-xl font-bold text-lg">Launch App</a>
+      </div>
+  </div>
+
+
+  <main class="w-full max-w-[1000px] bg-white rounded-[2rem] shadow-card border border-gray-100 overflow-hidden relative z-10 grid grid-cols-1 md:grid-cols-2 min-h-[600px]">
+
+    <!-- LEFT COLUMN -->
+    <div class="hidden md:flex flex-col justify-between bg-[#F5F5F7] p-12 relative overflow-hidden">
+      <div class="absolute top-[-20%] left-[-20%] w-[140%] h-[140%] bg-gradient-to-br from-blue-50 via-transparent to-transparent opacity-70 pointer-events-none"></div>
+      <div class="relative z-10">
+        <div class="flex items-center gap-2 mb-8">
+          <div class="w-8 h-8 bg-primary rounded-full flex items-center justify-center text-white font-bold text-lg shadow-sm">G</div>
+          <span class="font-bold text-lg tracking-tight text-dark">GoStudy!</span>
+        </div>
+        <h2 class="text-3xl font-bold text-dark leading-tight mb-4">Turn your notes into <br> <span class="text-primary">superpowers.</span></h2>
+        <p class="text-gray-500">Join 10,000+ students mastering their subjects with Active Recall AI.</p>
+      </div>
+      <div class="relative z-10 bg-white p-6 rounded-2xl shadow-subtle border border-gray-100/50 mt-12">
+        <div class="flex gap-1 text-yellow-400 mb-3">
+          <span class="material-icons-round text-base">star</span><span class="material-icons-round text-base">star</span><span class="material-icons-round text-base">star</span><span class="material-icons-round text-base">star</span><span class="material-icons-round text-base">star</span>
+        </div>
+        <p class="text-sm font-medium text-dark leading-relaxed mb-4">"I uploaded my History thesis and got a full memory palace in 30 seconds."</p>
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 bg-purple-100 text-purple-600 rounded-full flex items-center justify-center font-bold text-xs">DL</div>
+          <div><p class="text-xs font-bold text-dark">David L.</p><p class="text-[10px] text-gray-400 font-mono">Oxford University</p></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT COLUMN -->
+    <div class="p-8 md:p-12 flex flex-col justify-center bg-white">
+      
+      <div class="flex bg-secondary p-1 rounded-lg mb-8 mx-auto w-full max-w-xs">
+        <button id="tab-login" onclick="switchTab('login')" class="flex-1 py-1.5 text-sm font-medium rounded-md shadow-sm bg-white text-dark transition-all">Log In</button>
+        <button id="tab-register" onclick="switchTab('register')" class="flex-1 py-1.5 text-sm font-medium rounded-md text-gray-500 hover:text-dark transition-all">Sign Up</button>
+      </div>
+
+      <!-- LOGIN FORM -->
+      <div id="form-login" class="visible-state max-w-xs mx-auto w-full">
+        <div class="text-center mb-8">
+          <h3 class="text-2xl font-bold text-dark tracking-tight">Welcome back</h3>
+          <p class="text-sm text-gray-500 mt-2">Enter your details to access your study plans.</p>
+        </div>
+
+        <form id="login-form" class="space-y-4">
+          <div>
+            <label class="block text-xs font-semibold text-gray-700 mb-1 ml-1">Email</label>
+            <input id="login-email" type="email" required class="w-full px-4 py-3 rounded-xl bg-gray-50 border-transparent focus:bg-white focus:border-primary/30 focus:ring-0 text-sm transition-all" placeholder="student@university.edu" />
+          </div>
+          <div>
+            <div class="flex justify-between items-center mb-1 ml-1">
+              <label class="block text-xs font-semibold text-gray-700">Password</label>
+              <a href="#" class="text-xs text-primary font-medium hover:underline">Forgot?</a>
+            </div>
+            <input id="login-password" type="password" required class="w-full px-4 py-3 rounded-xl bg-gray-50 border-transparent focus:bg-white focus:border-primary/30 focus:ring-0 text-sm transition-all" placeholder="••••••••" />
+          </div>
+          <button id="login-submit-btn" type="submit" class="w-full bg-dark text-white font-bold py-3.5 rounded-xl hover:bg-black active:scale-[0.98] transition-all shadow-lg shadow-gray-200 mt-2 flex items-center justify-center gap-2">
+            Sign In
+          </button>
+        </form>
+
+        <div class="relative my-8">
+          <div class="absolute inset-0 flex items-center"><div class="w-full border-t border-gray-100"></div></div>
+          <div class="relative flex justify-center text-xs uppercase"><span class="bg-white px-2 text-gray-400">Or continue with</span></div>
+        </div>
+
+        <div class="grid grid-cols-1 gap-4">
+          <button id="google-btn" type="button" class="flex items-center justify-center gap-2 px-4 py-2.5 border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors">
+            <img src="https://www.svgrepo.com/show/475656/google-color.svg" class="w-5 h-5" alt="Google">
+            <span class="text-sm font-medium text-gray-600">Google</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- REGISTER FORM -->
+      <div id="form-register" class="hidden-state max-w-xs mx-auto w-full">
+        <div class="text-center mb-8">
+          <h3 class="text-2xl font-bold text-dark tracking-tight">Create account</h3>
+          <p class="text-sm text-gray-500 mt-2">Get started with your free 10 uploads.</p>
+        </div>
+
+        <form id="register-form" class="space-y-4">
+          <div>
+            <label class="block text-xs font-semibold text-gray-700 mb-1 ml-1">Full Name</label>
+            <input id="reg-name" type="text" required class="w-full px-4 py-3 rounded-xl bg-gray-50 border-transparent focus:bg-white focus:border-primary/30 focus:ring-0 text-sm transition-all" placeholder="John Doe" />
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-gray-700 mb-1 ml-1">Email</label>
+            <input id="reg-email" type="email" required class="w-full px-4 py-3 rounded-xl bg-gray-50 border-transparent focus:bg-white focus:border-primary/30 focus:ring-0 text-sm transition-all" placeholder="student@university.edu" />
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-gray-700 mb-1 ml-1">Password</label>
+            <input id="reg-password" type="password" required class="w-full px-4 py-3 rounded-xl bg-gray-50 border-transparent focus:bg-white focus:border-primary/30 focus:ring-0 text-sm transition-all" placeholder="Create a strong password" />
+          </div>
+
+          <!-- PFP selection -->
+          <div class="mt-6">
+            <label class="block text-xs font-semibold text-gray-700 mb-3 ml-1">Choose your Avatar</label>
+            <input type="hidden" id="reg-pfp-url" required />
+            <div id="pfp-grid" class="grid grid-cols-4 gap-3 max-h-48 overflow-y-auto p-2 bg-gray-50 rounded-2xl scrollbar-hide">
+              <!-- PFPs will be injected here -->
+            </div>
+            <p id="pfp-error" class="text-[10px] text-red-500 mt-2 hidden">Please select an avatar to continue.</p>
+          </div>
+          <button id="reg-submit-btn" type="submit" class="w-full bg-primary text-white font-bold py-3.5 rounded-xl hover:bg-blue-600 active:scale-[0.98] transition-all shadow-lg shadow-blue-500/20 mt-2 flex items-center justify-center gap-2">
+            Create Account
+          </button>
+        </form>
+
+        <p class="text-xs text-center text-gray-400 mt-6 leading-relaxed">
+          By clicking Create Account, you agree to our <a href="/terms/" class="underline hover:text-dark">Terms</a> and <a href="/privacy/" class="underline hover:text-dark">Privacy Policy</a>.
+        </p>
+      </div>
+
+    </div>
+    
+  </main>
+
+
+  <!-- FIREBASE AUTH SCRIPT -->
+  <script type="module" src="/backend/js/auth.js"></script>
+
+  <script>
+    function switchTab(tab) {
+      const loginForm = document.getElementById('form-login');
+      const registerForm = document.getElementById('form-register');
+      const loginBtn = document.getElementById('tab-login');
+      const registerBtn = document.getElementById('tab-register');
+
+      if (tab === 'login') {
+        loginForm.classList.remove('hidden-state');
+        loginForm.classList.add('visible-state');
+        registerForm.classList.remove('visible-state');
+        registerForm.classList.add('hidden-state');
+        loginBtn.classList.add('bg-white', 'shadow-sm', 'text-dark');
+        loginBtn.classList.remove('text-gray-500');
+        registerBtn.classList.remove('bg-white', 'shadow-sm', 'text-dark');
+        registerBtn.classList.add('text-gray-500');
+      } else {
+        registerForm.classList.remove('hidden-state');
+        registerForm.classList.add('visible-state');
+        loginForm.classList.remove('visible-state');
+        loginForm.classList.add('hidden-state');
+        registerBtn.classList.add('bg-white', 'shadow-sm', 'text-dark');
+        registerBtn.classList.remove('text-gray-500');
+        loginBtn.classList.remove('bg-white', 'shadow-sm', 'text-dark');
+        loginBtn.classList.add('text-gray-500');
+      }
+    }
+
+    // PFP selection logic
+    const pfpUrls = [
+      '/assets/pfp/User 01a.png', '/assets/pfp/User 01b.png', '/assets/pfp/User 01c.png',
+      '/assets/pfp/User 02a.png', '/assets/pfp/User 02b.png', '/assets/pfp/User 02c.png',
+      '/assets/pfp/User 03a.png', '/assets/pfp/User 03b.png', '/assets/pfp/User 03C.png',
+      '/assets/pfp/User 04a.png', '/assets/pfp/User 04b.png', '/assets/pfp/User 04c.png',
+      '/assets/pfp/User 05a.png', '/assets/pfp/User 05b.png', '/assets/pfp/User 05c.png',
+      '/assets/pfp/User 06a.png', '/assets/pfp/User 06b.png', '/assets/pfp/User 06c.png',
+      '/assets/pfp/User 07a.png', '/assets/pfp/User 07b.png', '/assets/pfp/User 07c.png'
+    ];
+
+    const pfpGrid = document.getElementById('pfp-grid');
+    const pfpInput = document.getElementById('reg-pfp-url');
+
+    if (pfpGrid) {
+      pfpUrls.forEach(url => {
+        const div = document.createElement('div');
+        div.className = 'pfp-option rounded-xl overflow-hidden aspect-square flex items-center justify-center bg-white shadow-sm';
+        div.innerHTML = `<img src="${url}" class="w-full h-full object-cover" alt="Avatar">`;
+        div.onclick = () => {
+          document.querySelectorAll('.pfp-option').forEach(opt => opt.classList.remove('selected'));
+          div.classList.add('selected');
+          pfpInput.value = url;
+          document.getElementById('pfp-error').classList.add('hidden');
+        };
+        pfpGrid.appendChild(div);
+      });
+    }
+  </script>
+  <script src="/assets/js/navbar.js"></script>
+</body>
+</html>

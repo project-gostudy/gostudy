@@ -1,0 +1,22 @@
+node_modules/
+.env*
+uploads/
+/tmp/
+TO-DO.md
+LOGS.md
+
+# OS specific
+.DS_Store
+Thumbs.db
+
+# IDEs and editors
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*

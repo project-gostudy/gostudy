@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI Chat - GoStudy!</title>
+
+    <!-- favicon -->
+    <link rel="icon" href="/assets/go-logo.png" type="image/png" />
+    <link rel="shortcut icon" href="/assets/go-logo.png" type="image/png" />
+
+    <!-- styles -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              primary: "#007AFF",
+              secondary: "#F5F5F7",
+              dark: "#1D1D1F",
+              success: "#34C759",
+            },
+            fontFamily: {
+              sans: ["Inter", "-apple-system", "sans-serif"],
+              mono: ["JetBrains Mono", "monospace"],
+            },
+            boxShadow: {
+              'subtle': '0 1px 2px rgba(0,0,0,0.05)',
+              'card': '0 4px 24px rgba(0,0,0,0.04)',
+              'input': '0 0 0 1px rgba(0,0,0,0.05), 0 2px 8px rgba(0,0,0,0.05)',
+            },
+            animation: {
+              'loading-bar': 'loading 1.5s infinite ease-in-out',
+            },
+            keyframes: {
+              loading: {
+                '0%': { transform: 'translateX(-100%)' },
+                '100%': { transform: 'translateX(300%)' },
+              }
+            }
+          },
+        },
+      };
+    </script>
+
+    <!-- fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons+Round"
+      rel="stylesheet"
+    />
+
+    <style>
+      /* Custom Scrollbar for Chat */
+      .scrollbar-hidden::-webkit-scrollbar {
+        display: none;
+      }
+      .scrollbar-hidden {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+      }
+      
+      /* Markdown/Prose tweaks */
+      .prose p { margin-bottom: 0.75em; }
+      .prose pre { background: #1e1e1e; border-radius: 0.75rem; }
+
+      /* Animation for message entry */
+      .message-enter {
+        animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+      @keyframes slideUp {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+    </style>
+
+    <!-- Auth Logic -->
+    <script type="module" src="/backend/js/auth.js"></script>
+  </head>
+  <body class="bg-white text-dark font-sans antialiased h-screen flex overflow-hidden selection:bg-primary/20">
+    
+    <!-- Mobile Overlay (Backdrop) -->
+    <div id="mobile-backdrop" class="fixed inset-0 bg-black/20 z-40 hidden md:hidden glass transition-opacity" onclick="toggleSidebar()"></div>
+
+    <!-- Sidebar -->
+    <aside
+      id="sidebar"
+      class="fixed md:static inset-y-0 left-0 w-[280px] bg-[#F9FAFB] border-r border-gray-200 flex flex-col justify-between z-50 transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out"
+    >
+      <div class="p-5 flex flex-col h-full">
+        <!-- Header -->
+        <div class="flex items-center justify-between mb-6">
+          <a class="flex items-center gap-2" href="/index.html">
+            <div class="w-8 h-8 rounded-lg overflow-hidden">
+              <img src="/assets/go-logo.png" alt="Logo" class="object-cover w-full h-full" />
+            </div>
+            <span class="font-bold text-lg tracking-tight text-dark">GoStudy!</span>
+          </a>
+          <!-- Close Sidebar (Mobile) -->
+          <button class="md:hidden text-gray-400 p-1" onclick="toggleSidebar()">
+            <span class="material-icons-round">close</span>
+          </button>
+        </div>
+
+        <!-- New Chat Button -->
+        <button
+          onclick="window.startNewSession()"
+          class="group w-full flex items-center gap-3 px-4 py-3 rounded-xl bg-white border border-gray-200 shadow-subtle hover:border-primary/50 hover:text-primary transition-all mb-6"
+        >
+          <div class="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
+            <span class="material-icons-round text-sm">add</span>
+          </div>
+          <span class="font-semibold text-sm">New Study Session</span>
+        </button>
+
+        <!-- History Label -->
+        <h3 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3 px-2">Recent</h3>
+
+        <!-- History List -->
+        <div class="flex-1 overflow-y-auto -mx-2 px-2 scrollbar-hidden">
+          <div id="history-container" class="space-y-1">
+            <!-- Loading Spinner -->
+            <div class="flex justify-center py-4">
+              <div class="w-5 h-5 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- User Profile (Bottom) -->
+        <div class="pt-4 mt-4 border-t border-gray-200">
+          <button class="flex items-center gap-3 w-full p-2 rounded-xl hover:bg-gray-100 transition-colors text-left group">
+            <div class="w-9 h-9 rounded-full bg-gradient-to-br from-blue-100 to-purple-100 flex items-center justify-center border border-white shadow-sm overflow-hidden">
+              <img id="sidebar-user-img" src="" class="w-full h-full object-cover hidden" />
+              <span id="sidebar-user-initials" class="font-bold text-primary text-xs">G</span>
+            </div>
+            <div class="flex-1 overflow-hidden">
+              <p id="sidebar-user-name" class="text-sm font-bold text-dark truncate">Guest User</p>
+              <p class="text-[10px] text-gray-400">Pro Plan</p>
+            </div>
+            <span class="material-icons-round text-gray-400 group-hover:text-dark transition-colors">settings</span>
+          </button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Chat Area -->
+    <main class="flex-1 flex flex-col h-full relative bg-white">
+      
+      <!-- Mobile Header -->
+      <div class="md:hidden h-14 border-b border-gray-100 flex items-center justify-between px-4 sticky top-0 bg-white/80 backdrop-blur z-30">
+        <button onclick="toggleSidebar()" class="text-dark p-2 -ml-2">
+          <span class="material-icons-round">menu</span>
+        </button>
+        <span class="font-bold text-dark">Nova AI</span>
+        <div class="w-8"></div> <!-- Spacer -->
+      </div>
+
+      <!-- Chat Container -->
+      <div id="chat-container" class="flex-1 overflow-y-auto p-4 md:p-8 space-y-8 scroll-smooth scrollbar-hidden">
+        
+        <!-- Welcome State (Empty) -->
+        <div id="welcome-message" class="h-full flex flex-col items-center justify-center max-w-2xl mx-auto pb-10">
+          
+          <div class="w-20 h-20 bg-gradient-to-br from-blue-50 to-purple-50 rounded-[2rem] flex items-center justify-center mb-8 shadow-sm">
+            <span class="material-icons-round text-4xl text-primary">auto_awesome</span>
+          </div>
+          
+          <h2 class="text-3xl font-bold mb-3 text-dark text-center">Hello, Student.</h2>
+          <p class="text-gray-400 text-center mb-10 text-lg">I'm ready to help you ace your exams. <br>Select a starter prompt below:</p>
+
+          <!-- Starter Prompts Grid -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
+            <button class="text-left p-5 rounded-2xl border border-gray-100 hover:border-primary/30 hover:shadow-subtle hover:bg-gray-50 transition-all group">
+              <span class="material-icons-round text-purple-500 mb-2">summarize</span>
+              <h4 class="font-bold text-sm text-dark group-hover:text-primary">Summarize Notes</h4>
+              <p class="text-xs text-gray-400 mt-1">Upload a PDF and get key takeaways.</p>
+            </button>
+
+            <button class="text-left p-5 rounded-2xl border border-gray-100 hover:border-primary/30 hover:shadow-subtle hover:bg-gray-50 transition-all group">
+              <span class="material-icons-round text-success mb-2">quiz</span>
+              <h4 class="font-bold text-sm text-dark group-hover:text-primary">Generate Quiz</h4>
+              <p class="text-xs text-gray-400 mt-1">Create multiple choice questions.</p>
+            </button>
+
+            <button class="text-left p-5 rounded-2xl border border-gray-100 hover:border-primary/30 hover:shadow-subtle hover:bg-gray-50 transition-all group">
+              <span class="material-icons-round text-orange-500 mb-2">lightbulb</span>
+              <h4 class="font-bold text-sm text-dark group-hover:text-primary">Explain Concept</h4>
+              <p class="text-xs text-gray-400 mt-1">Simplify complex topics like I'm 5.</p>
+            </button>
+
+            <button class="text-left p-5 rounded-2xl border border-gray-100 hover:border-primary/30 hover:shadow-subtle hover:bg-gray-50 transition-all group">
+              <span class="material-icons-round text-blue-500 mb-2">calendar_month</span>
+              <h4 class="font-bold text-sm text-dark group-hover:text-primary">Study Plan</h4>
+              <p class="text-xs text-gray-400 mt-1">Build a schedule for exam week.</p>
+            </button>
+          </div>
+        </div>
+        <!-- End Welcome State -->
+
+      </div>
+
+      <!-- Input Area -->
+      <div class="p-4 md:p-6 bg-white/80 backdrop-blur-md sticky bottom-0 z-20">
+        <div class="max-w-3xl mx-auto relative">
+            
+          <div class="bg-white rounded-[1.5rem] shadow-input border border-gray-100 focus-within:ring-2 ring-primary/20 focus-within:border-primary transition-all relative overflow-hidden">
+            
+            <!-- Loading Bar -->
+            <div id="loading-bar" class="absolute top-0 left-0 right-0 h-0.5 bg-gray-100 overflow-hidden hidden">
+               <div class="h-full bg-primary w-1/3 animate-loading-bar rounded-full"></div>
+            </div>
+
+            <textarea
+              id="user-input"
+              rows="1"
+              class="w-full resize-none border-0 bg-transparent focus:ring-0 text-base py-4 pl-5 pr-12 max-h-40 overflow-y-auto placeholder:text-gray-400 text-dark"
+              placeholder="Ask a question or paste text..."
+            ></textarea>
+
+            <div class="flex justify-between items-center px-3 pb-3">
+               <!-- Toolbar -->
+               <div class="flex gap-2">
+                  <button class="p-2 text-gray-400 hover:bg-gray-50 rounded-xl transition-colors hover:text-dark flex items-center justify-center" title="Attach File">
+                    <span class="material-icons-round text-xl transform rotate-45">attach_file</span>
+                  </button>
+                  <button class="p-2 text-gray-400 hover:bg-gray-50 rounded-xl transition-colors hover:text-dark flex items-center justify-center" title="Voice Input">
+                    <span class="material-icons-round text-xl">mic</span>
+                  </button>
+               </div>
+
+               <!-- Send Button -->
+               <button
+                 id="send-btn"
+                 class="w-10 h-10 bg-primary text-white rounded-xl flex items-center justify-center hover:bg-blue-600 active:scale-95 transition-all shadow-lg shadow-blue-500/20 disabled:opacity-50 disabled:shadow-none disabled:cursor-not-allowed"
+               >
+                 <span class="material-icons-round text-lg">arrow_upward</span>
+               </button>
+            </div>
+          </div>
+          
+          <p class="text-center text-[11px] text-gray-400 mt-3 font-medium">
+            Nova can make mistakes. Please verify important info.
+          </p>
+        </div>
+      </div>
+    </main>
+
+    <!-- Mobile Sidebar Logic -->
+    <script>
+      function toggleSidebar() {
+        const sidebar = document.getElementById('sidebar');
+        const backdrop = document.getElementById('mobile-backdrop');
+        
+        // Check current state via class presence
+        const isHidden = sidebar.classList.contains('-translate-x-full');
+        
+        if (isHidden) {
+          sidebar.classList.remove('-translate-x-full');
+          backdrop.classList.remove('hidden');
+        } else {
+          sidebar.classList.add('-translate-x-full');
+          backdrop.classList.add('hidden');
+        }
+      }
+
+      // Auto-resize textarea
+      const textarea = document.getElementById('user-input');
+      textarea.addEventListener('input', function() {
+        this.style.height = 'auto';
+        this.style.height = (this.scrollHeight) + 'px';
+        if(this.value === '') this.style.height = 'auto';
+      });
+
+      // Quick Prompt Handler (Optional for visual effect)
+      document.querySelectorAll('#welcome-message button').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+           // Find the text inside the H4 of the clicked button
+           const text = e.currentTarget.querySelector('h4').innerText;
+           textarea.value = "I want to " + text.toLowerCase() + "...";
+           textarea.focus();
+        });
+      });
+    </script>
+    <script type="module" src="/ai-chat/script.js"></script>
+  </body>
+</html>

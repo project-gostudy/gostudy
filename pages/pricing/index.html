@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pricing - GoStudy!</title>
+
+  <!-- tailwind -->
+  <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+
+  <!-- ggl fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet"/>
+
+  <!-- favicon -->
+  <link rel="icon" href="/assets/go-logo.png?v=2" type="image/png" />
+  <link rel="shortcut icon" href="/assets/go-logo.png?v=2" type="image/png" />
+  <link rel="apple-touch-icon" href="/assets/go-logo.png?v=2" />
+  <meta name="theme-color" content="#007AFF" />
+
+  <script src="/backend/js/auth.js"></script>
+
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: "#007AFF", 
+            secondary: "#F5F5F7", 
+            dark: "#1D1D1F",
+            success: "#34C759",
+            'surface': "#FBFBFD",
+          },
+          fontFamily: {
+            sans: ["Inter", "-apple-system", "sans-serif"],
+            mono: ["JetBrains Mono", "monospace"],
+          },
+          boxShadow: {
+            'apple': '0 4px 24px rgba(0,0,0,0.06)',
+            'apple-hover': '0 8px 32px rgba(0,0,0,0.12)',
+          },
+        },
+      },
+    };
+  </script>
+
+  <script type="module" src="/backend/js/auth.js"></script>
+  <style>
+    /* Hide scrollbar while keeping scroll functionality */
+    html {
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+    html::-webkit-scrollbar {
+      display: none;
+    }
+    
+    body {
+        background-color: #F5F5F7; /* Apple's off-white background */
+    }
+
+    /* Custom Toggles */
+    .toggle-checkbox:checked {
+      right: 0;
+      border-color: #007AFF;
+    }
+    .toggle-checkbox:checked + .toggle-label {
+      background-color: #007AFF;
+    }
+    
+    /* Comparison Table Sticky Header */
+    .sticky-header {
+        position: sticky;
+        top: 80px; /* offset for navbar */
+        z-index: 20;
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        background-color: rgba(245, 245, 247, 0.85);
+    }
+    
+    details > summary {
+      list-style: none;
+    }
+    details > summary::-webkit-details-marker {
+      display: none;
+    }
+
+    /* Typography Tweaks */
+    .tracking-tighter-apple {
+        letter-spacing: -0.04em;
+    }
+  </style>
+
+  <link rel="stylesheet" href="/assets/css/navbar.css">
+</head>
+
+<body class="text-[#1D1D1F] font-sans antialiased selection:bg-primary/20 selection:text-primary overflow-x-hidden">
+
+  <!-- navbar -->
+  <header id="main-header" class="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-xl border-b border-white/20 transition-all duration-300">
+    <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+      
+      <!-- Logo -->
+      <a class="flex items-center gap-2 group" href="/index.html">
+        <div class="relative w-10 h-10 overflow-hidden">
+            <img src="/assets/go-logo.png?v=2" class="w-25 h-25" alt="Logo">
+        </div>
+        <span class="font-bold text-xl tracking-tight text-dark">GoStudy!</span>
+      </a>
+
+      <!-- Desktop Navigation -->
+      <nav class="hidden md:flex items-center gap-2">
+        
+        <!-- Products Dropdown -->
+        <div class="nav-item relative group px-4 py-3">
+          <button class="flex items-center gap-1 text-sm font-semibold text-gray-600 group-hover:text-primary transition-colors">
+            Products
+            <span class="material-icons-round text-lg opacity-50 group-hover:rotate-180 transition-transform">expand_more</span>
+          </button>
+          
+          <div class="dropdown-menu absolute top-full left-1/2 -translate-x-1/2 w-[700px] pt-4">
+            <div class="bg-white rounded-3xl p-6 shadow-premium border border-gray-100 grid grid-cols-2 gap-6 relative overflow-hidden">
+               
+               <div class="absolute top-0 right-0 w-64 h-64 bg-blue-50/50 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
+
+               <!-- Left Col -->
+               <div class="space-y-2">
+                  <h4 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">Core Platform</h4>
+                  
+                  <a href="/ai-chat/" class="flex items-start gap-4 p-3 rounded-2xl hover:bg-gray-100 transition-colors group/item">
+                    <div class="w-10 h-10 rounded-full bg-red-50 text-red-600 flex items-center justify-center group-hover/item:scale-110 transition-transform">
+                        <span class="material-icons-round text-xl">chat</span>
+                    </div>
+                    <div>
+                        <p class="font-bold text-dark text-sm">AI Chat</p>
+                        <p class="text-xs text-gray-500 mt-1">Chat with our AI assistant Nova.</p>
+                    </div>
+                  </a>
+
+                  <a href="/methodology/" class="flex items-start gap-4 p-3 rounded-2xl hover:bg-gray-100 transition-colors group/item">
+                    <div class="w-10 h-10 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center group-hover/item:scale-110 transition-transform">
+                        <span class="material-icons-round text-xl">psychology</span>
+                    </div>
+                    <div>
+                        <p class="font-bold text-dark text-sm">Methodology</p>
+                        <p class="text-xs text-gray-500 mt-1">Science-backed testing method.</p>
+                    </div>
+                  </a>
+
+                  <a href="/pricing/" class="flex items-start gap-4 p-3 rounded-2xl hover:bg-gray-100 transition-colors group/item">
+                    <div class="w-10 h-10 rounded-full bg-yellow-50 text-yellow-600 flex items-center justify-center group-hover/item:scale-110 transition-transform">
+                        <span class="material-icons-round text-xl">monetization_on</span>
+                    </div>
+                    <div>
+                        <p class="font-bold text-dark text-sm">Pricing</p>
+                        <p class="text-xs text-gray-500 mt-1">Choose the plan that best fits your needs.</p>
+                    </div>
+                  </a>
+
+                  <a href="/how-it-works/" class="flex items-start gap-4 p-3 rounded-2xl hover:bg-gray-100 transition-colors group/item">
+                    <div class="w-10 h-10 rounded-full bg-purple-50 text-purple-600 flex items-center justify-center group-hover/item:scale-110 transition-transform">
+                        <span class="material-icons-round text-xl text-purple-600">account_tree</span>
+                    </div>
+                    <div>
+                        <p class="font-bold text-dark text-sm">Memory Palace</p>
+                        <p class="text-xs text-gray-500 mt-1">AI-generated spatial maps.</p>
+                    </div>
+                  </a>
+               </div>
+
+               <!-- Right Col -->
+               <div class="flex flex-col h-full">
+                  <h4 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">Plans</h4>
+                  <a href="/pricing" class="block bg-dark rounded-2xl p-5 text-white flex-1 hover:shadow-lg transition-all group/card relative overflow-hidden">
+                      <div class="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent opacity-0 group-hover/card:opacity-100 transition-opacity"></div>
+                      <div class="relative z-10">
+                          <div class="flex justify-between items-start mb-4">
+                              <span class="bg-primary px-2 py-1 rounded text-[10px] font-bold">PRO</span>
+                              <span class="material-icons-round">arrow_forward</span>
+                          </div>
+                          <p class="font-bold text-lg mb-1">Upgrade your <br>Study Game</p>
+                          <p class="text-gray-400 text-xs">Unlock unlimited uploads and advanced spaced repetition.</p>
+                      </div>
+                  </a>
+               </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Resources Dropdown -->
+        <div class="nav-item relative group px-4 py-3">
+          <button class="flex items-center gap-1 text-sm font-semibold text-gray-600 group-hover:text-primary transition-colors">
+            Resources
+            <span class="material-icons-round text-lg opacity-50 group-hover:rotate-180 transition-transform">expand_more</span>
+          </button>
+          
+           <div class="dropdown-menu absolute top-full left-1/2 -translate-x-1/2 w-[400px] pt-4">
+            <div class="bg-white rounded-3xl p-2 shadow-premium border border-gray-100">
+               <a href="/articles/" class="flex items-center gap-4 p-3 rounded-2xl hover:bg-gray-100 transition-colors">
+                   <div class="w-10 h-10 rounded-full bg-orange-50 text-orange-500 flex items-center justify-center">
+                       <span class="material-icons-round">article</span>
+                   </div>
+                   <div class="flex-1">
+                       <p class="font-bold text-dark text-sm">Articles & Guides</p>
+                       <p class="text-xs text-gray-500">Study tips and neuroscience.</p>
+                   </div>
+               </a>
+               <a href="/onboarding/" class="flex items-start gap-4 p-3 rounded-2xl hover:bg-gray-100 transition-colors group/item">
+                    <div class="w-10 h-10 rounded-full bg-green-50 text-green-600 flex items-center justify-center group-hover/item:scale-110 transition-transform">
+                        <span class="material-icons-round text-xl">person_add</span>
+                    </div>
+                    <div>
+                        <p class="font-bold text-dark text-sm">Onboarding</p>
+                        <p class="text-xs text-gray-500 mt-1">Start your journey with us.</p>
+                    </div>
+                  </a>
+               <a href="/parents/" class="flex items-center gap-4 p-3 rounded-2xl hover:bg-gray-100 transition-colors">
+                   <div class="w-10 h-10 rounded-full bg-pink-50 text-pink-500 flex items-center justify-center">
+                       <span class="material-icons-round">family_restroom</span>
+                   </div>
+                   <div class="flex-1">
+                       <p class="font-bold text-dark text-sm">For Parents</p>
+                       <p class="text-xs text-gray-500">How to support your student.</p>
+                   </div>
+               </a>
+               <a href="#faq" class="flex items-center gap-4 p-3 rounded-2xl hover:bg-gray-100 transition-colors">
+                   <div class="w-10 h-10 rounded-full bg-blue-50 text-blue-500 flex items-center justify-center">
+                       <span class="material-icons-round">help</span>
+                   </div>
+                   <div class="flex-1">
+                       <p class="font-bold text-dark text-sm">Help Center</p>
+                       <p class="text-xs text-gray-500">FAQs and Support.</p>
+                   </div>
+               </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Company Dropdown -->
+        <div class="nav-item relative group px-4 py-3">
+          <button class="flex items-center gap-1 text-sm font-semibold text-gray-600 group-hover:text-primary transition-colors">
+            Company
+            <span class="material-icons-round text-lg opacity-50 group-hover:rotate-180 transition-transform">expand_more</span>
+          </button>
+          
+           <div class="dropdown-menu absolute top-full left-1/2 -translate-x-1/2 w-[300px] pt-4">
+            <div class="bg-white rounded-3xl p-2 shadow-premium border border-gray-100">
+               <a href="/about/" class="flex items-center gap-4 p-3 rounded-2xl hover:bg-gray-100 transition-colors">
+                   <span class="font-bold text-dark text-sm ml-2">About Us</span>
+               </a>
+               <a href="/contact/" class="flex items-center gap-4 p-3 rounded-2xl hover:bg-gray-100 transition-colors">
+                   <span class="font-bold text-dark text-sm ml-2">Contact</span>
+               </a>
+               <hr class="border-gray-100 my-1 mx-2">
+               <a href="/privacy/" class="flex items-center gap-4 p-3 rounded-2xl hover:bg-gray-100 transition-colors">
+                   <span class="text-gray-500 text-sm ml-2">Privacy Policy</span>
+               </a>
+               <a href="/terms/" class="flex items-center gap-4 p-3 rounded-2xl hover:bg-gray-100 transition-colors">
+                   <span class="text-gray-500 text-sm ml-2">Terms of Service</span>
+               </a>
+            </div>
+          </div>
+        </div>
+
+      </nav>
+
+      <!-- CTA & Mobile Toggle -->
+      <div class="flex items-center gap-4">
+        <a href="/login/" class="hidden md:inline-flex bg-dark hover:bg-black text-white px-6 py-2.5 rounded-full text-sm font-bold transition-all shadow-lg shadow-black/5 hover:shadow-black/10 hover:-translate-y-0.5">
+            Launch App
+        </a>
+        <button id="mobile-menu-btn" class="md:hidden p-2 text-dark">
+            <span class="material-icons-round text-2xl">menu</span>
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- mobile menu -->
+  <div id="mobile-menu" class="fixed inset-0 z-[60] bg-white opacity-0 pointer-events-none transition-opacity duration-300 flex flex-col hidden">
+      <div class="flex justify-between items-center p-6 border-b border-gray-100">
+          <span class="font-bold text-xl text-dark">GoStudy!</span>
+          <button id="mobile-menu-close" class="p-2 text-dark">
+              <span class="material-icons-round text-2xl">close</span>
+          </button>
+      </div>
+      <div class="p-6 flex-1 overflow-y-auto space-y-6">
+          <!--mobile links -->
+          <div class="space-y-4">
+              <h4 class="text-xs font-bold text-gray-400 uppercase tracking-widest">Products</h4>
+              <a href="/methodology/" class="block text-lg font-semibold text-dark">Active Recall</a>
+              <a href="/how-it-works/" class="block text-lg font-semibold text-dark">Memory Palace</a>
+              <a href="/pricing" class="block text-lg font-semibold text-dark">Pricing</a>
+          </div>
+          <div class="space-y-4">
+              <h4 class="text-xs font-bold text-gray-400 uppercase tracking-widest">Resources</h4>
+              <a href="/articles/" class="block text-lg font-semibold text-dark">Articles</a>
+              <a href="/parents/" class="block text-lg font-semibold text-dark">For Parents</a>
+              <a href="#faq" class="block text-lg font-semibold text-dark">Help Center</a>
+          </div>
+           <div class="space-y-4">
+              <h4 class="text-xs font-bold text-gray-400 uppercase tracking-widest">Company</h4>
+              <a href="/about/" class="block text-lg font-semibold text-dark">About</a>
+              <a href="/contact/" class="block text-lg font-semibold text-dark">Contact</a>
+          </div>
+      </div>
+      <div class="p-6 border-t border-gray-100">
+          <a href="/login/" class="block w-full text-center bg-primary text-white py-4 rounded-xl font-bold text-lg">Launch App</a>
+      </div>
+  </div>
+
+
+  <main class="w-full mx-auto mt-20 min-h-screen">
+
+    <!-- HERO HEADER -->
+    <section class="pt-28 pb-16 px-6 text-center">
+      <div class="max-w-4xl mx-auto">
+        <h1 class="text-5xl md:text-7xl font-bold tracking-tighter-apple mb-6 text-[#1D1D1F]">
+          Invest in your <span class="text-primary">brain</span>.
+        </h1>
+        <p class="text-xl md:text-2xl text-gray-500 font-medium leading-relaxed max-w-2xl mx-auto mb-10">
+          Unlock your full academic potential with the tools used by top performers. Simple, transparent pricing.
+        </p>
+
+        <!-- Billing Toggle -->
+        <div class="relative inline-flex bg-[#E8E8ED] p-1 rounded-full items-center cursor-pointer select-none">
+           <button id="btn-monthly" class="relative z-10 px-6 py-2 rounded-full text-sm font-semibold transition-all duration-300 bg-white shadow-sm text-black">
+             Monthly
+           </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- PRICING CARDS -->
+    <section class="max-w-7xl mx-auto px-6 pb-24">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-start">
+        
+        <!-- CARD: STARTER -->
+        <div class="bg-white p-8 rounded-[2rem] shadow-apple border border-white transition-transform hover:-translate-y-1 mt-0 md:mt-8">
+          <div class="h-16 mb-4">
+            <span class="inline-block px-3 py-1 bg-gray-100 text-gray-500 text-[10px] font-bold tracking-widest uppercase rounded-full">Free Tier</span>
+          </div>
+          <h3 class="text-3xl font-bold tracking-tight mb-2">Starter</h3>
+          <p class="text-gray-500 text-sm font-medium mb-6 min-h-[40px]">Perfect for testing the methodology before committing.</p>
+          
+          <div class="mb-8">
+             <span class="text-5xl font-bold tracking-tighter">$0</span>
+          </div>
+
+          <a href="/login" class="block w-full py-3.5 rounded-full bg-[#F5F5F7] text-[#1D1D1F] text-center font-semibold text-sm hover:bg-[#E8E8ED] transition-colors">
+            Get Started
+          </a>
+          
+          <div class="mt-8 space-y-4">
+            <p class="text-xs font-bold text-gray-400 uppercase tracking-widest">Includes</p>
+            <ul class="space-y-3">
+              <li class="flex items-center gap-3 text-sm font-medium text-gray-700">
+                <span class="material-icons-round text-primary text-lg">check</span> 3 Uploads (Lifetime)
+              </li>
+              <li class="flex items-center gap-3 text-sm font-medium text-gray-700">
+                <span class="material-icons-round text-primary text-lg">check</span> Standard Summary
+              </li>
+              <li class="flex items-center gap-3 text-sm font-medium text-gray-700">
+                <span class="material-icons-round text-primary text-lg">check</span> Basic Flashcards
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- CARD: PRO (HERO) -->
+        <div class="relative bg-white p-10 rounded-[2.5rem] shadow-apple-hover border border-primary/20 z-10 transform md:scale-105">
+          <div class="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2">
+             <span class="bg-gradient-to-r from-blue-600 to-blue-500 text-white text-xs font-bold px-4 py-1.5 rounded-full shadow-lg shadow-blue-500/30 tracking-wide uppercase">Most Popular</span>
+          </div>
+          
+          <div class="h-16 mb-4">
+            <div class="w-12 h-12 rounded-2xl bg-blue-50 text-primary flex items-center justify-center">
+               <span class="material-icons-round">bolt</span>
+            </div>
+          </div>
+          
+          <h3 class="text-4xl font-bold tracking-tight mb-2">Pro</h3>
+          <p class="text-gray-500 text-sm font-medium mb-6 min-h-[40px]">For elite students who need unlimited power and AI tools.</p>
+          
+          <div class="mb-8 flex items-baseline gap-1">
+             <span class="text-6xl font-bold tracking-tighter price-display" data-monthly="12.99" data-yearly="10.49">$12.99</span>
+             <span class="text-gray-400 font-medium">/mo</span>
+          </div>
+          <p class="text-xs text-gray-400 mb-6 -mt-6 h-4 billing-subtext">billed monthly</p>
+
+          <a href="/pricing/pro/" class="block w-full py-4 rounded-full bg-primary text-white text-center font-bold text-sm shadow-lg shadow-blue-500/25 hover:bg-blue-600 transition-all hover:scale-[1.02]">
+            Start Free Trial
+          </a>
+          
+          <div class="mt-10 space-y-4">
+            <p class="text-xs font-bold text-gray-400 uppercase tracking-widest">Everything in Starter, plus</p>
+            <ul class="space-y-3">
+              <li class="flex items-center gap-3 text-sm font-bold text-gray-800">
+                <span class="material-icons-round text-primary text-lg">all_inclusive</span> Unlimited Uploads
+              </li>
+              <li class="flex items-center gap-3 text-sm font-bold text-gray-800">
+                <span class="material-icons-round text-primary text-lg">psychology</span> Memory Palace Mode
+              </li>
+              <li class="flex items-center gap-3 text-sm font-bold text-gray-800">
+                <span class="material-icons-round text-primary text-lg">mic</span> AI Voice Notes
+              </li>
+              <li class="flex items-center gap-3 text-sm font-bold text-gray-800">
+                <span class="material-icons-round text-primary text-lg">speed</span> Priority Processing
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- CARD: INSTITUTION -->
+        <div class="bg-white p-8 rounded-[2rem] shadow-apple border border-white transition-transform hover:-translate-y-1 mt-0 md:mt-8">
+          <div class="h-16 mb-4">
+            <span class="inline-block px-3 py-1 bg-purple-100 text-purple-600 text-[10px] font-bold tracking-widest uppercase rounded-full">For Schools</span>
+          </div>
+          <h3 class="text-3xl font-bold tracking-tight mb-2">Campus</h3>
+          <p class="text-gray-500 text-sm font-medium mb-6 min-h-[40px]">Scale efficiency across your entire department or campus.</p>
+          
+          <div class="mb-8">
+             <span class="text-5xl font-bold tracking-tighter">Custom</span>
+          </div>
+
+          <a href="/contact" class="block w-full py-3.5 rounded-full bg-[#F5F5F7] text-[#1D1D1F] text-center font-semibold text-sm hover:bg-[#E8E8ED] transition-colors">
+            Contact Sales
+          </a>
+          
+          <div class="mt-8 space-y-4">
+            <p class="text-xs font-bold text-gray-400 uppercase tracking-widest">Institution Features</p>
+            <ul class="space-y-3">
+              <li class="flex items-center gap-3 text-sm font-medium text-gray-700">
+                <span class="material-icons-round text-primary text-lg">check</span> Admin Dashboard
+              </li>
+              <li class="flex items-center gap-3 text-sm font-medium text-gray-700">
+                <span class="material-icons-round text-primary text-lg">check</span> SSO Integration
+              </li>
+              <li class="flex items-center gap-3 text-sm font-medium text-gray-700">
+                <span class="material-icons-round text-primary text-lg">check</span> Advanced Analytics
+              </li>
+            </ul>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- COMPARISON TABLE -->
+    <section class="py-20 bg-white border-t border-gray-100">
+        <div class="max-w-5xl mx-auto px-6">
+            <h2 class="text-3xl md:text-4xl font-bold text-center mb-16 tracking-tight">Compare Features</h2>
+            
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead class="sticky-header">
+                        <tr>
+                            <th class="py-6 px-4 bg-transparent w-1/3"></th>
+                            <th class="py-6 px-4 text-center text-lg font-bold">Starter</th>
+                            <th class="py-6 px-4 text-center text-lg font-bold text-primary">Pro Student</th>
+                            <th class="py-6 px-4 text-center text-lg font-bold">Campus</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-sm">
+                        <!-- Section: Core -->
+                        <tr><td colspan="4" class="py-4 px-4 font-bold text-gray-400 text-xs uppercase tracking-widest mt-8 pb-12">Core Features</td></tr>
+                        
+                        <tr class="border-b border-gray-100 group hover:bg-gray-50 transition-colors">
+                            <td class="py-4 px-4 font-medium text-gray-900">File Uploads</td>
+                            <td class="py-4 px-4 text-center text-gray-500">3 (Lifetime)</td>
+                            <td class="py-4 px-4 text-center font-bold text-dark">40 / month</td>
+                            <td class="py-4 px-4 text-center text-gray-500">Unlimited</td>
+                        </tr>
+                        <tr class="border-b border-gray-100 group hover:bg-gray-50 transition-colors">
+                            <td class="py-4 px-4 font-medium text-gray-900">File Size Limit</td>
+                            <td class="py-4 px-4 text-center text-gray-500">15 MB</td>
+                            <td class="py-4 px-4 text-center font-bold text-dark">500 MB</td>
+                            <td class="py-4 px-4 text-center text-gray-500">2 GB</td>
+                        </tr>
+                        <tr class="border-b border-gray-100 group hover:bg-gray-50 transition-colors">
+                            <td class="py-4 px-4 font-medium text-gray-900">Memory Palace</td>
+                            <td class="py-4 px-4 text-center text-gray-300">—</td>
+                            <td class="py-4 px-4 text-center"><span class="material-icons-round text-primary">check_circle</span></td>
+                            <td class="py-4 px-4 text-center"><span class="material-icons-round text-gray-400">check_circle</span></td>
+                        </tr>
+
+                        <!-- Section: AI -->
+                        <tr><td colspan="4" class="py-4 px-4 font-bold text-gray-400 text-xs uppercase tracking-widest pt-10">AI & Intelligence</td></tr>
+
+                        <tr class="border-b border-gray-100 group hover:bg-gray-50 transition-colors">
+                            <td class="py-4 px-4 font-medium text-gray-900">AI Voice Notes</td>
+                            <td class="py-4 px-4 text-center text-gray-300">—</td>
+                            <td class="py-4 px-4 text-center"><span class="material-icons-round text-primary">check_circle</span></td>
+                            <td class="py-4 px-4 text-center"><span class="material-icons-round text-gray-400">check_circle</span></td>
+                        </tr>
+                        <tr class="border-b border-gray-100 group hover:bg-gray-50 transition-colors">
+                            <td class="py-4 px-4 font-medium text-gray-900">Smart Flashcards</td>
+                            <td class="py-4 px-4 text-center text-gray-500">Basic</td>
+                            <td class="py-4 px-4 text-center font-bold text-dark">Advanced (Image Gen)</td>
+                            <td class="py-4 px-4 text-center text-gray-500">Advanced</td>
+                        </tr>
+                        <tr class="border-b border-gray-100 group hover:bg-gray-50 transition-colors">
+                            <td class="py-4 px-4 font-medium text-gray-900">Processing Speed</td>
+                            <td class="py-4 px-4 text-center text-gray-500">Standard</td>
+                            <td class="py-4 px-4 text-center font-bold text-dark">Turbo</td>
+                            <td class="py-4 px-4 text-center text-gray-500">Turbo</td>
+                        </tr>
+                        
+                         <!-- Section: Support -->
+                        <tr><td colspan="4" class="py-4 px-4 font-bold text-gray-400 text-xs uppercase tracking-widest pt-10">Support</td></tr>
+                        
+                         <tr class="border-b border-gray-100 group hover:bg-gray-50 transition-colors">
+                            <td class="py-4 px-4 font-medium text-gray-900">Data Privacy</td>
+                            <td class="py-4 px-4 text-center text-gray-500">Standard</td>
+                            <td class="py-4 px-4 text-center text-gray-500">Encrypted</td>
+                            <td class="py-4 px-4 text-center text-gray-500">Enterprise Grade</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="py-24 max-w-3xl mx-auto px-6">
+      <h2 class="text-3xl font-bold tracking-tight mb-12 text-center">Frequently Asked Questions</h2>
+      <div class="space-y-4">
+        
+        <details class="group bg-white rounded-2xl border border-gray-100 overflow-hidden open:shadow-lg transition-all duration-300">
+          <summary class="flex justify-between items-center p-6 cursor-pointer font-bold text-lg select-none">
+            Can I cancel my subscription anytime?
+            <span class="material-icons-round text-gray-400 group-open:rotate-180 transition-transform">expand_more</span>
+          </summary>
+          <div class="px-6 pb-6 text-gray-500 leading-relaxed">
+            Absolutely. You can manage your subscription directly from your settings dashboard. There are no hidden fees or cancellation penalties.
+          </div>
+        </details>
+
+        <details class="group bg-white rounded-2xl border border-gray-100 overflow-hidden open:shadow-lg transition-all duration-300">
+          <summary class="flex justify-between items-center p-6 cursor-pointer font-bold text-lg select-none">
+            What payment methods do you accept?
+            <span class="material-icons-round text-gray-400 group-open:rotate-180 transition-transform">expand_more</span>
+          </summary>
+          <div class="px-6 pb-6 text-gray-500 leading-relaxed">
+            We accept all major credit cards (Visa, Mastercard, Amex), PayPal, and Apple Pay. Transactions are secured by Stripe.
+          </div>
+        </details>
+
+        <details class="group bg-white rounded-2xl border border-gray-100 overflow-hidden open:shadow-lg transition-all duration-300">
+          <summary class="flex justify-between items-center p-6 cursor-pointer font-bold text-lg select-none">
+            Is there a student discount?
+            <span class="material-icons-round text-gray-400 group-open:rotate-180 transition-transform">expand_more</span>
+          </summary>
+          <div class="px-6 pb-6 text-gray-500 leading-relaxed">
+            Our <b>Pro Student</b> plan is already heavily discounted compared to standard enterprise rates to make it accessible for individual learners.
+          </div>
+        </details>
+      </div>
+    </section>
+
+    <!-- BOTTOM CTA -->
+    <section class="py-12 px-6">
+        <div class="max-w-5xl mx-auto bg-primary rounded-[2.5rem] p-12 md:p-24 text-center relative overflow-hidden shadow-2xl shadow-blue-900/20">
+            <!-- decorative circles -->
+            <div class="absolute top-0 left-0 w-64 h-64 bg-white opacity-10 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2"></div>
+            <div class="absolute bottom-0 right-0 w-64 h-64 bg-white opacity-10 rounded-full blur-3xl translate-x-1/2 translate-y-1/2"></div>
+            
+            <div class="relative z-10">
+                <h2 class="text-4xl md:text-5xl font-bold text-white tracking-tight mb-6">Ready to master your curriculum?</h2>
+                <p class="text-blue-100 text-lg mb-10 max-w-xl mx-auto">Join over 50,000 students who have upgraded their study habits.</p>
+                <div class="flex flex-col md:flex-row gap-4 justify-center">
+                    <a href="/login" class="px-8 py-4 bg-white text-primary font-bold rounded-full hover:scale-105 transition-transform shadow-lg">Start Free Trial</a>
+                    <a href="/methodology" class="px-8 py-4 bg-transparent border border-white/30 text-white font-bold rounded-full hover:bg-white/10 transition-colors">How it Works</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+  </main>
+
+  <footer class="bg-white border-t border-gray-100 pt-24 pb-12">
+    <div class="max-w-6xl mx-auto px-6">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-20">
+        <div class="col-span-1 md:col-span-2">
+          <a class="font-bold text-2xl text-dark tracking-tight mb-6 block" href="/index.html">GoStudy!</a>
+          <p class="text-gray-500 leading-relaxed max-w-sm mb-8">
+            The intelligent study companion for high performers. We bridge the gap between information and mastery.
+          </p>
+        </div>
+        
+        <div>
+          <h4 class="font-bold text-dark mb-8 uppercase text-xs tracking-widest">Product</h4>
+          <ul class="space-y-4 text-sm text-gray-500 font-medium">
+            <li><a href="/articles/" class="hover:text-primary transition-colors">Articles</a></li>
+            <li><a href="/ai-chat/" class="hover:text-primary transition-colors">AI Chat</a></li>
+            <li><a href="/pricing" class="hover:text-primary transition-colors">Pricing</a></li>
+            <li><a href="/onboarding/" class="hover:text-primary transition-colors">Onboarding</a></li>
+            <li><a href="/parents/" class="hover:text-primary transition-colors">Parents</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="font-bold text-dark mb-8 uppercase text-xs tracking-widest">Company</h4>
+          <ul class="space-y-4 text-sm text-gray-500 font-medium">
+            <li><a href="/about/" class="hover:text-primary transition-colors">About</a></li>
+            <li><a href="/contact/" class="hover:text-primary transition-colors">Contact</a></li>
+            <li><a href="/methodology/" class="hover:text-primary transition-colors">Methodology</a></li>
+            <li><a href="/how-it-works/" class="hover:text-primary transition-colors">How It Works</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="border-t border-gray-100 pt-12 flex flex-col md:flex-row justify-between items-center gap-6 text-sm text-gray-400">
+        <div>&copy; 2025 GoStudy Inc. All rights reserved. Built for the future of education.</div>
+        <div class="flex gap-8">
+          <a href="/privacy/" class="hover:text-dark transition-colors">Privacy Policy</a>
+          <a href="/terms/" class="hover:text-dark transition-colors">Terms of Service</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/assets/js/navbar.js"></script>
+  
+  <script>
+    // Logic for the Monthly/Yearly toggle
+    const btnMonthly = document.getElementById('btn-monthly');
+    const btnYearly = document.getElementById('btn-yearly');
+    const priceDisplays = document.querySelectorAll('.price-display');
+    const subtextDisplays = document.querySelectorAll('.billing-subtext');
+
+    function setMonthly() {
+      // Style toggle
+      btnMonthly.classList.add('bg-white', 'text-black', 'shadow-sm');
+      btnMonthly.classList.remove('text-gray-500');
+      btnYearly.classList.remove('bg-white', 'text-black', 'shadow-sm');
+      btnYearly.classList.add('text-gray-500');
+
+      // Update Prices
+      priceDisplays.forEach(el => {
+        el.innerText = '$' + el.dataset.monthly;
+      });
+      subtextDisplays.forEach(el => {
+        el.innerText = 'billed monthly';
+      });
+    }
+
+    function setYearly() {
+      // Style toggle
+      btnYearly.classList.add('bg-white', 'text-black', 'shadow-sm');
+      btnYearly.classList.remove('text-gray-500');
+      btnMonthly.classList.remove('bg-white', 'text-black', 'shadow-sm');
+      btnMonthly.classList.add('text-gray-500');
+
+      // Update Prices
+      priceDisplays.forEach(el => {
+        el.innerText = '$' + el.dataset.yearly;
+      });
+      subtextDisplays.forEach(el => {
+        el.innerText = 'billed yearly';
+      });
+    }
+
+    btnMonthly.addEventListener('click', setMonthly);
+    btnYearly.addEventListener('click', setYearly);
+  </script>
+</body>
+</html>

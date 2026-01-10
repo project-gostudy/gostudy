@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GoStudy! Pro — Master Any Subject</title>
+
+  <!-- tailwind -->
+  <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+
+  <!-- ggl fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet"/>
+
+  <!-- PayPal SDK -->
+  <script src="https://www.paypal.com/sdk/js?client-id=AQaH0DHGWrf-PqqpMUNbGCCGwrr25WATrrDqqr8O_NsWdfooMTPeLVAwL-uei9BlwbxNyg_vNAIOPYaV&vault=true&intent=subscription" data-sdk-integration-source="button-factory"></script>
+
+  <!-- favicon -->
+  <link rel="icon" href="/assets/go-logo.png?v=2" type="image/png" />
+  <link rel="shortcut icon" href="/assets/go-logo.png?v=2" type="image/png" />
+  <meta name="theme-color" content="#0071e3" />
+
+
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: "#0071e3", 
+            dark: "#1d1d1f",  
+            subtle: "#86868b",  
+            bg: "#f5f5f7",     
+            surface: "#ffffff",
+          },
+          fontFamily: {
+            sans: ["Inter", "-apple-system", "BlinkMacSystemFont", "sans-serif"],
+          },
+          boxShadow: {
+            'apple': '0 4px 24px rgba(0,0,0,0.06)',
+            'apple-hover': '0 8px 32px rgba(0,0,0,0.12)',
+            'glow': '0 0 40px rgba(0, 113, 227, 0.4)',
+          },
+          letterSpacing: {
+            tighter: '-0.04em',
+            tight: '-0.025em',
+          }
+        },
+      },
+    };
+  </script>
+
+  <script type="module" src="/backend/js/auth.js"></script>
+
+  <style>
+    /* Clean Scrollbar */
+    html {
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+    html::-webkit-scrollbar {
+      display: none;
+    }
+
+    body {
+      background-color: #f5f5f7;
+      color: #1d1d1f;
+    }
+
+    /* Animation Utilities */
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .reveal.active {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    
+    .delay-1 { transition-delay: 0.1s; }
+    .delay-2 { transition-delay: 0.2s; }
+    .delay-3 { transition-delay: 0.3s; }
+
+    /* Custom Gradient Text */
+    .text-gradient {
+      background: linear-gradient(135deg, #2b86c5 0%, #0071e3 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+  </style>
+  <link rel="stylesheet" href="/assets/css/navbar.css">
+</head>
+
+<body class="font-sans antialiased selection:bg-primary/20 selection:text-primary overflow-x-hidden">
+
+
+   <!-- navbar -->
+  <header id="main-header" class="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-xl border-b border-white/20 transition-all duration-300">
+    <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+      
+      <!-- Logo -->
+      <a class="flex items-center gap-2 group" href="/index.html">
+        <div class="relative w-10 h-10 overflow-hidden">
+            <img src="/assets/go-logo.png?v=2" class="w-25 h-25" alt="Logo">
+        </div>
+        <span class="font-bold text-xl tracking-tight text-dark">GoStudy!</span>
+      </a>
+
+      <!-- Desktop Navigation -->
+      <nav class="hidden md:flex items-center gap-2">
+        
+        <!-- Products Dropdown -->
+        <div class="nav-item relative group px-4 py-3">
+          <button class="flex items-center gap-1 text-sm font-semibold text-gray-600 group-hover:text-primary transition-colors">
+            Products
+            <span class="material-icons-round text-lg opacity-50 group-hover:rotate-180 transition-transform">expand_more</span>
+          </button>
+          
+          <div class="dropdown-menu absolute top-full left-1/2 -translate-x-1/2 w-[700px] pt-4">
+            <div class="bg-white rounded-3xl p-6 shadow-premium border border-gray-100 grid grid-cols-2 gap-6 relative overflow-hidden">
+               
+               <div class="absolute top-0 right-0 w-64 h-64 bg-blue-50/50 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
+
+               <!-- Left Col -->
+               <div class="space-y-2">
+                  <h4 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">Core Platform</h4>
+                  
+                  <a href="/ai-chat/" class="flex items-start gap-4 p-3 rounded-2xl hover:bg-gray-100 transition-colors group/item">
+                    <div class="w-10 h-10 rounded-full bg-red-50 text-red-600 flex items-center justify-center group-hover/item:scale-110 transition-transform">
+                        <span class="material-icons-round text-xl">chat</span>
+                    </div>
+                    <div>
+                        <p class="font-bold text-dark text-sm">AI Chat</p>
+                        <p class="text-xs text-gray-500 mt-1">Chat with our AI assistant Nova.</p>
+                    </div>
+                  </a>
+
+                  <a href="/methodology/" class="flex items-start gap-4 p-3 rounded-2xl hover:bg-gray-100 transition-colors group/item">
+                    <div class="w-10 h-10 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center group-hover/item:scale-110 transition-transform">
+                        <span class="material-icons-round text-xl">psychology</span>
+                    </div>
+                    <div>
+                        <p class="font-bold text-dark text-sm">Methodology</p>
+                        <p class="text-xs text-gray-500 mt-1">Science-backed testing method.</p>
+                    </div>
+                  </a>
+
+                  <a href="/pricing/" class="flex items-start gap-4 p-3 rounded-2xl hover:bg-gray-100 transition-colors group/item">
+                    <div class="w-10 h-10 rounded-full bg-yellow-50 text-yellow-600 flex items-center justify-center group-hover/item:scale-110 transition-transform">
+                        <span class="material-icons-round text-xl">monetization_on</span>
+                    </div>
+                    <div>
+                        <p class="font-bold text-dark text-sm">Pricing</p>
+                        <p class="text-xs text-gray-500 mt-1">Choose the plan that best fits your needs.</p>
+                    </div>
+                  </a>
+
+                  <a href="/how-it-works/" class="flex items-start gap-4 p-3 rounded-2xl hover:bg-gray-100 transition-colors group/item">
+                    <div class="w-10 h-10 rounded-full bg-purple-50 text-purple-600 flex items-center justify-center group-hover/item:scale-110 transition-transform">
+                        <span class="material-icons-round text-xl text-purple-600">account_tree</span>
+                    </div>
+                    <div>
+                        <p class="font-bold text-dark text-sm">Memory Palace</p>
+                        <p class="text-xs text-gray-500 mt-1">AI-generated spatial maps.</p>
+                    </div>
+                  </a>
+               </div>
+
+               <!-- Right Col -->
+               <div class="flex flex-col h-full">
+                  <h4 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">Plans</h4>
+                  <a href="/pricing" class="block bg-dark rounded-2xl p-5 text-white flex-1 hover:shadow-lg transition-all group/card relative overflow-hidden">
+                      <div class="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent opacity-0 group-hover/card:opacity-100 transition-opacity"></div>
+                      <div class="relative z-10">
+                          <div class="flex justify-between items-start mb-4">
+                              <span class="bg-primary px-2 py-1 rounded text-[10px] font-bold">PRO</span>
+                              <span class="material-icons-round">arrow_forward</span>
+                          </div>
+                          <p class="font-bold text-lg mb-1">Upgrade your <br>Study Game</p>
+                          <p class="text-gray-400 text-xs">Unlock unlimited uploads and advanced spaced repetition.</p>
+                      </div>
+                  </a>
+               </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Resources Dropdown -->
+        <div class="nav-item relative group px-4 py-3">
+          <button class="flex items-center gap-1 text-sm font-semibold text-gray-600 group-hover:text-primary transition-colors">
+            Resources
+            <span class="material-icons-round text-lg opacity-50 group-hover:rotate-180 transition-transform">expand_more</span>
+          </button>
+          
+           <div class="dropdown-menu absolute top-full left-1/2 -translate-x-1/2 w-[400px] pt-4">
+            <div class="bg-white rounded-3xl p-2 shadow-premium border border-gray-100">
+               <a href="/articles/" class="flex items-center gap-4 p-3 rounded-2xl hover:bg-gray-100 transition-colors">
+                   <div class="w-10 h-10 rounded-full bg-orange-50 text-orange-500 flex items-center justify-center">
+                       <span class="material-icons-round">article</span>
+                   </div>
+                   <div class="flex-1">
+                       <p class="font-bold text-dark text-sm">Articles & Guides</p>
+                       <p class="text-xs text-gray-500">Study tips and neuroscience.</p>
+                   </div>
+               </a>
+               <a href="/onboarding/" class="flex items-start gap-4 p-3 rounded-2xl hover:bg-gray-100 transition-colors group/item">
+                    <div class="w-10 h-10 rounded-full bg-green-50 text-green-600 flex items-center justify-center group-hover/item:scale-110 transition-transform">
+                        <span class="material-icons-round text-xl">person_add</span>
+                    </div>
+                    <div>
+                        <p class="font-bold text-dark text-sm">Onboarding</p>
+                        <p class="text-xs text-gray-500 mt-1">Start your journey with us.</p>
+                    </div>
+                  </a>
+               <a href="/parents/" class="flex items-center gap-4 p-3 rounded-2xl hover:bg-gray-100 transition-colors">
+                   <div class="w-10 h-10 rounded-full bg-pink-50 text-pink-500 flex items-center justify-center">
+                       <span class="material-icons-round">family_restroom</span>
+                   </div>
+                   <div class="flex-1">
+                       <p class="font-bold text-dark text-sm">For Parents</p>
+                       <p class="text-xs text-gray-500">How to support your student.</p>
+                   </div>
+               </a>
+               <a href="#faq" class="flex items-center gap-4 p-3 rounded-2xl hover:bg-gray-100 transition-colors">
+                   <div class="w-10 h-10 rounded-full bg-blue-50 text-blue-500 flex items-center justify-center">
+                       <span class="material-icons-round">help</span>
+                   </div>
+                   <div class="flex-1">
+                       <p class="font-bold text-dark text-sm">Help Center</p>
+                       <p class="text-xs text-gray-500">FAQs and Support.</p>
+                   </div>
+               </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Company Dropdown -->
+        <div class="nav-item relative group px-4 py-3">
+          <button class="flex items-center gap-1 text-sm font-semibold text-gray-600 group-hover:text-primary transition-colors">
+            Company
+            <span class="material-icons-round text-lg opacity-50 group-hover:rotate-180 transition-transform">expand_more</span>
+          </button>
+          
+           <div class="dropdown-menu absolute top-full left-1/2 -translate-x-1/2 w-[300px] pt-4">
+            <div class="bg-white rounded-3xl p-2 shadow-premium border border-gray-100">
+               <a href="/about/" class="flex items-center gap-4 p-3 rounded-2xl hover:bg-gray-100 transition-colors">
+                   <span class="font-bold text-dark text-sm ml-2">About Us</span>
+               </a>
+               <a href="/contact/" class="flex items-center gap-4 p-3 rounded-2xl hover:bg-gray-100 transition-colors">
+                   <span class="font-bold text-dark text-sm ml-2">Contact</span>
+               </a>
+               <hr class="border-gray-100 my-1 mx-2">
+               <a href="/privacy/" class="flex items-center gap-4 p-3 rounded-2xl hover:bg-gray-100 transition-colors">
+                   <span class="text-gray-500 text-sm ml-2">Privacy Policy</span>
+               </a>
+               <a href="/terms/" class="flex items-center gap-4 p-3 rounded-2xl hover:bg-gray-100 transition-colors">
+                   <span class="text-gray-500 text-sm ml-2">Terms of Service</span>
+               </a>
+            </div>
+          </div>
+        </div>
+
+      </nav>
+
+      <!-- CTA & Mobile Toggle -->
+      <div class="flex items-center gap-4">
+        <a href="/login/" class="hidden md:inline-flex bg-dark hover:bg-black text-white px-6 py-2.5 rounded-full text-sm font-bold transition-all shadow-lg shadow-black/5 hover:shadow-black/10 hover:-translate-y-0.5">
+            Launch App
+        </a>
+        <button id="mobile-menu-btn" class="md:hidden p-2 text-dark">
+            <span class="material-icons-round text-2xl">menu</span>
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- mobile menu -->
+  <div id="mobile-menu" class="fixed inset-0 z-[60] bg-white opacity-0 pointer-events-none transition-opacity duration-300 flex flex-col hidden">
+      <div class="flex justify-between items-center p-6 border-b border-gray-100">
+          <span class="font-bold text-xl text-dark">GoStudy!</span>
+          <button id="mobile-menu-close" class="p-2 text-dark">
+              <span class="material-icons-round text-2xl">close</span>
+          </button>
+      </div>
+      <div class="p-6 flex-1 overflow-y-auto space-y-6">
+          <!--mobile links -->
+          <div class="space-y-4">
+              <h4 class="text-xs font-bold text-gray-400 uppercase tracking-widest">Products</h4>
+              <a href="/methodology/" class="block text-lg font-semibold text-dark">Active Recall</a>
+              <a href="/how-it-works/" class="block text-lg font-semibold text-dark">Memory Palace</a>
+              <a href="/pricing" class="block text-lg font-semibold text-dark">Pricing</a>
+          </div>
+          <div class="space-y-4">
+              <h4 class="text-xs font-bold text-gray-400 uppercase tracking-widest">Resources</h4>
+              <a href="/articles/" class="block text-lg font-semibold text-dark">Articles</a>
+              <a href="/parents/" class="block text-lg font-semibold text-dark">For Parents</a>
+              <a href="#faq" class="block text-lg font-semibold text-dark">Help Center</a>
+          </div>
+           <div class="space-y-4">
+              <h4 class="text-xs font-bold text-gray-400 uppercase tracking-widest">Company</h4>
+              <a href="/about/" class="block text-lg font-semibold text-dark">About</a>
+              <a href="/contact/" class="block text-lg font-semibold text-dark">Contact</a>
+          </div>
+      </div>
+      <div class="p-6 border-t border-gray-100">
+          <a href="/login/" class="block w-full text-center bg-primary text-white py-4 rounded-xl font-bold text-lg">Launch App</a>
+      </div>
+  </div>
+
+
+  <main class="w-full mx-auto mt-28">
+
+    <!-- HERO: CENTERED -->
+    <section class="relative px-6 pb-20 pt-10 flex flex-col items-center text-center">
+      <div class="max-w-4xl mx-auto">
+        <div class="reveal active">
+          <h1 class="text-5xl md:text-8xl font-bold tracking-tighter mb-6 leading-tight text-dark">
+            GoStudy! <span class="text-gradient">Pro</span>
+          </h1>
+        </div>
+        
+        <p class="reveal active delay-1 text-xl md:text-3xl font-medium text-subtle max-w-2xl mx-auto mb-10 leading-tight">
+          Supercharge your brain with unlimited uploads, AI voice mode, and neuro-adaptive testing.
+        </p>
+
+        <div class="reveal active delay-2 flex flex-col sm:flex-row gap-4 justify-center items-center">
+          <a href="#purchase" class="px-8 py-4 bg-primary text-white rounded-full font-bold text-lg hover:scale-105 transition-transform shadow-lg shadow-blue-500/30">
+            Upgrade Now
+          </a>
+          <p class="text-sm font-semibold text-subtle">Starting at $12.99/mo</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- BENTO GRID FEATURES -->
+    <section class="py-20 px-6 max-w-7xl mx-auto">
+       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+           
+           <!-- Large Card -->
+           <div class="reveal md:col-span-2 bg-white rounded-[2.5rem] p-10 md:p-14 border border-gray-100 hover:border-gray-300 transition-all duration-500 overflow-hidden relative group">
+               <div class="absolute top-0 right-0 w-96 h-96 bg-blue-50 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 group-hover:border-gray-200"></div>
+               
+               <div class="relative z-10">
+                   <div class="w-14 h-14 rounded-2xl bg-black text-white flex items-center justify-center mb-6">
+                       <span class="material-icons-round text-3xl">all_inclusive</span>
+                   </div>
+                   <h3 class="text-3xl font-bold tracking-tight mb-4">Unlimited Everything.</h3>
+                   <p class="text-subtle text-lg font-medium max-w-md">
+                       Never hit a limit again. Upload thousands of pages of textbooks, lecture slides, and handwritten notes. Our AI indexes everything instantly.
+                   </p>
+               </div>
+           </div>
+
+           <!-- Tall Card -->
+           <div class="reveal delay-1 md:col-span-1 lg:row-span-2 bg-white rounded-[2.5rem] p-10 border border-gray-100 hover:border-gray-300 transition-all duration-500 flex flex-col">
+                <div class="w-14 h-14 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center mb-6">
+                    <span class="material-icons-round text-3xl">psychology</span>
+                </div>
+                <h3 class="text-3xl font-bold tracking-tight mb-4">Memory Palace.</h3>
+                <p class="text-subtle text-lg font-medium mb-8">
+                    Turn boring lists into vivid 3D spaces. Our spatial AI generates mental maps for you to walk through.
+                </p>
+                <div class="flex-1 rounded-2xl bg-purple-50 border border-gray-100 relative overflow-hidden">
+                    <!-- visual representation mockup -->
+                    <div class="absolute inset-0 flex items-center justify-center opacity-60 color-black">
+                        <span class="material-icons-round text-9xl text-purple-700 ">view_in_ar</span>
+                    </div>
+                </div>
+           </div>
+
+           <!-- Medium Card -->
+           <div class="reveal delay-2 bg-white rounded-[2.5rem] p-10 border border-gray-100 hover:border-gray-300 transition-all duration-500">
+               <div class="w-14 h-14 rounded-2xl bg-green-50 text-green-600 flex items-center justify-center mb-6">
+                   <span class="material-icons-round text-3xl">mic</span>
+               </div>
+               <h3 class="text-2xl font-bold tracking-tight mb-2">AI Voice Mode.</h3>
+               <p class="text-subtle font-medium">
+                   Study while you walk. Convert any summary into a conversational podcast.
+               </p>
+           </div>
+
+           <!-- Medium Card -->
+           <div class="reveal delay-3 bg-white rounded-[2.5rem] p-10 border border-gray-100 hover:border-gray-300 transition-all duration-500">
+               <div class="w-14 h-14 rounded-2xl bg-orange-50 text-orange-500 flex items-center justify-center mb-6">
+                   <span class="material-icons-round text-3xl">bolt</span>
+               </div>
+               <h3 class="text-2xl font-bold tracking-tight mb-2">Turbo Processing.</h3>
+               <p class="text-subtle font-medium">
+                   Skip the queue. Pro files are processed on dedicated high-speed GPU clusters.
+               </p>
+           </div>
+
+       </div>
+    </section>
+
+    <!-- COMPARISON ROW -->
+    <section class="py-20 px-6">
+        <div class="max-w-4xl mx-auto border-t border-gray-200 pt-20">
+            <h3 class="text-center text-3xl font-bold tracking-tight mb-16">The Pro Advantage.</h3>
+            
+            <div class="space-y-6 grid grid-cols-1 grid-rows-3 grid-color-black">
+                <!-- Row -->
+                <div class="flex items-center justify-between py-4 border-b border-gray-100 reveal">
+                    <span class="text-lg font-medium text-gray-500">File Limits</span>
+                    <div class="flex gap-12 text-right">
+                        <span class="text-gray-400 font-medium w-24">3 (Lifetime)</span>
+                        <span class="text-dark font-bold w-24">40 / month</span>
+                    </div>
+                </div>
+                <!-- Row -->
+                <div class="flex items-center justify-between py-4 border-b border-gray-100 reveal">
+                    <span class="text-lg font-medium text-gray-500">Max File Size</span>
+                    <div class="flex gap-12 text-right">
+                        <span class="text-gray-400 font-medium w-24">15 MB</span>
+                        <span class="text-dark font-bold w-24">500 MB</span>
+                    </div>
+                </div>
+                <!-- Row -->
+                <div class="flex items-center justify-between py-4 border-b border-gray-100 reveal">
+                    <span class="text-lg font-medium text-gray-500">Generative Flashcards</span>
+                    <div class="flex gap-12 text-right">
+                        <span class="text-gray-400 font-medium w-24">Basic</span>
+                        <span class="text-dark font-bold w-24">Advanced</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PURCHASE SECTION -->
+    <section id="purchase" class="py-20 px-6">
+      <div class="max-w-5xl mx-auto">
+        <div class="bg-[#1D1D1F] text-white rounded-[3rem] p-10 md:p-24 text-center relative overflow-hidden shadow-2xl">
+          
+          <!-- Glow -->
+          <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[500px] bg-blue-600/20 blur-[120px] rounded-full pointer-events-none"></div>
+
+          <div class="relative z-10 max-w-lg mx-auto">
+            <h2 class="text-4xl md:text-5xl font-bold mb-6 tracking-tight">Invest in your grades.</h2>
+            <p class="text-gray-400 text-lg mb-12">Cancel anytime. No hidden fees. Just smarter studying.</p>
+
+            <div class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-[2rem] p-8 md:p-10 shadow-xl reveal">
+              <div class="flex justify-between items-center mb-8">
+                  <div class="text-left">
+                      <span class="block text-sm font-bold text-gray-400 uppercase tracking-wider">Pro Student</span>
+                      <span class="block text-4xl font-bold tracking-tight text-white mt-1">$12.99<span class="text-base text-gray-500 font-normal">/mo</span></span>
+                  </div>
+                  <div class="w-12 h-12 bg-primary rounded-full flex items-center justify-center shadow-glow">
+                      <span class="material-icons-round text-white">star</span>
+                  </div>
+              </div>
+
+              <!-- PayPal Container -->
+              <div id="paypal-button-container-P-1HX52143VS0590336NFJ7DBY" class="w-full relative z-20"></div>
+              
+              <div class="mt-6 flex items-center justify-center gap-2 text-gray-500 text-xs">
+                <span class="material-icons-round text-sm">lock</span>
+                <span>Payments processed securely by PayPal</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+  <footer class="bg-white border-t border-gray-100 pt-24 pb-12">
+    <div class="max-w-6xl mx-auto px-6">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-20">
+        <div class="col-span-1 md:col-span-2">
+          <a class="font-bold text-2xl text-dark tracking-tight mb-6 block" href="/index.html">GoStudy!</a>
+          <p class="text-gray-500 leading-relaxed max-w-sm mb-8">
+            The intelligent study companion for high performers. We bridge the gap between information and mastery.
+          </p>
+        </div>
+        
+        <div>
+          <h4 class="font-bold text-dark mb-8 uppercase text-xs tracking-widest">Product</h4>
+          <ul class="space-y-4 text-sm text-gray-500 font-medium">
+            <li><a href="/articles/" class="hover:text-primary transition-colors">Articles</a></li>
+            <li><a href="/ai-chat/" class="hover:text-primary transition-colors">AI Chat</a></li>
+            <li><a href="/pricing" class="hover:text-primary transition-colors">Pricing</a></li>
+            <li><a href="/onboarding/" class="hover:text-primary transition-colors">Onboarding</a></li>
+            <li><a href="/parents/" class="hover:text-primary transition-colors">Parents</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="font-bold text-dark mb-8 uppercase text-xs tracking-widest">Company</h4>
+          <ul class="space-y-4 text-sm text-gray-500 font-medium">
+            <li><a href="/about/" class="hover:text-primary transition-colors">About</a></li>
+            <li><a href="/contact/" class="hover:text-primary transition-colors">Contact</a></li>
+            <li><a href="/methodology/" class="hover:text-primary transition-colors">Methodology</a></li>
+            <li><a href="/how-it-works/" class="hover:text-primary transition-colors">How It Works</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="border-t border-gray-100 pt-12 flex flex-col md:flex-row justify-between items-center gap-6 text-sm text-gray-400">
+        <div>&copy; 2025 GoStudy Inc. All rights reserved. Built for the future of education.</div>
+        <div class="flex gap-8">
+          <a href="/privacy/" class="hover:text-dark transition-colors">Privacy Policy</a>
+          <a href="/terms/" class="hover:text-dark transition-colors">Terms of Service</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/assets/js/navbar.js"></script>
+
+  <script type="module">
+    import { auth, API_BASE } from "/backend/js/auth.js";
+    
+    // Reveal Animation Logic
+    const revealElements = document.querySelectorAll('.reveal');
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if(entry.isIntersecting){
+          entry.target.classList.add('active');
+        }
+      });
+    }, { threshold: 0.1 });
+    revealElements.forEach(el => revealObserver.observe(el));
+
+    // Poll for credits balance with timeout
+    async function pollForCredits(token, initialBalance, maxAttempts = 30) {
+        for (let i = 0; i < maxAttempts; i++) {
+            await new Promise(r => setTimeout(r, 2000)); // Wait 2 seconds between polls
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/credits/balance`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    // Check if credits increased (payment processed)
+                    if (data.credits_balance > initialBalance) {
+                        return { success: true, data };
+                    }
+                }
+            } catch (e) {
+                console.log('Poll attempt failed:', e);
+            }
+        }
+        return { success: false };
+    }
+
+    // PayPal Buttons Implementation
+    paypal.Buttons({
+        style: {
+            shape: 'pill',
+            color: 'blue',
+            layout: 'vertical',
+            label: 'subscribe'
+        },
+        createSubscription: function(data, actions) {
+          // Pass user ID to PayPal as custom_id for webhook matching
+          const user = auth.currentUser;
+          return actions.subscription.create({
+            plan_id: 'P-1HX52143VS0590336NFJ7DBY',
+            custom_id: user ? user.uid : undefined
+          });
+        },
+        onApprove: async function(data, actions) {
+          const container = document.getElementById('paypal-button-container-P-1HX52143VS0590336NFJ7DBY');
+          
+          // Show processing state
+          container.innerHTML = `
+            <div class="text-center py-6">
+              <div class="animate-spin inline-block w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full mb-4"></div>
+              <p class="text-white font-medium mb-2">Payment Processing...</p>
+              <p class="text-sm text-gray-400">Your credits will appear shortly. Please wait.</p>
+            </div>
+          `;
+          
+          try {
+            const user = auth.currentUser;
+            if (!user) {
+              // Store subscription for after login
+              sessionStorage.setItem('pendingSubscription', data.subscriptionID);
+              window.location.href = '/login/?upgrade=pro';
+              return;
+            }
+            
+            const token = await user.getIdToken();
+            
+            // Get current balance before polling
+            let initialBalance = 0;
+            try {
+                const balanceRes = await fetch(`${API_BASE}/api/credits/balance`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (balanceRes.ok) {
+                    const balanceData = await balanceRes.json();
+                    initialBalance = balanceData.credits_balance || 0;
+                }
+            } catch (e) {}
+            
+            // Poll for credits (webhook will add them)
+            const result = await pollForCredits(token, initialBalance);
+            
+            if (result.success) {
+                // Credits received! Redirect to dashboard
+                window.location.href = '/dashboard/?upgraded=true';
+            } else {
+                // Timeout - show success anyway (webhook may be slow)
+                container.innerHTML = `
+                  <div class="text-center py-4">
+                    <div class="w-12 h-12 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <span class="text-2xl">✓</span>
+                    </div>
+                    <p class="text-white font-medium mb-2">Payment Received!</p>
+                    <p class="text-sm text-gray-400 mb-4">Your credits will appear within a few minutes.</p>
+                    <a href="/dashboard/" class="inline-block bg-white text-gray-900 px-6 py-2 rounded-lg font-bold hover:shadow-lg transition-all">
+                      Go to Dashboard
+                    </a>
+                  </div>
+                `;
+            }
+            
+          } catch (error) {
+            console.error('Payment processing error:', error);
+            container.innerHTML = `
+              <div class="text-center py-4">
+                <p class="text-amber-400 font-medium mb-2">Payment received but processing delayed</p>
+                <p class="text-sm text-gray-400 mb-4">Your credits will appear within a few minutes.</p>
+                <a href="/dashboard/" class="inline-block bg-white text-gray-900 px-6 py-2 rounded-lg font-bold">
+                  Go to Dashboard
+                </a>
+              </div>
+            `;
+          }
+        }
+    }).render('#paypal-button-container-P-1HX52143VS0590336NFJ7DBY');
+  </script>
+</body>
+</html>

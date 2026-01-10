@@ -1,0 +1,22 @@
+{
+  "cleanUrls": true,
+  "trailingSlash": false,
+  "outputDirectory": ".",
+  "rewrites": [
+    { "source": "/about/:path*", "destination": "/pages/about/:path*" },
+    { "source": "/ai-chat/:path*", "destination": "/pages/ai-chat/:path*" },
+    { "source": "/articles/:path*", "destination": "/pages/articles/:path*" },
+    { "source": "/contact/:path*", "destination": "/pages/contact/:path*" },
+    { "source": "/dashboard/:path*", "destination": "/pages/dashboard/:path*" },
+    { "source": "/edit-plan/:path*", "destination": "/pages/edit-plan/:path*" },
+    { "source": "/how-it-works/:path*", "destination": "/pages/how-it-works/:path*" },
+    { "source": "/login/:path*", "destination": "/pages/login/:path*" },
+    { "source": "/methodology/:path*", "destination": "/pages/methodology/:path*" },
+    { "source": "/onboarding/:path*", "destination": "/pages/onboarding/:path*" },
+    { "source": "/parents/:path*", "destination": "/pages/parents/:path*" },
+    { "source": "/pricing/:path*", "destination": "/pages/pricing/:path*" },
+    { "source": "/privacy/:path*", "destination": "/pages/privacy/:path*" },
+    { "source": "/profile/:path*", "destination": "/pages/profile/:path*" },
+    { "source": "/terms/:path*", "destination": "/pages/terms/:path*" }
+  ]
+}
